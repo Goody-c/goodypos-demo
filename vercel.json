@@ -34,6 +34,9 @@
       "dest": "/api/handler.mjs"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
