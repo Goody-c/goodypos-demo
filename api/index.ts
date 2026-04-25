@@ -152,11 +152,18 @@ await ensureRootSystemOwner({
   initialAdminPassword: process.env.INITIAL_ADMIN_PASSWORD || 'ChangeMe123!',
 });
 
-// Auto-seed demo data on first boot (fresh /tmp database)
+// On cold start, copy pre-seeded DB instead of seeding from scratch (faster)
 if (isNewDatabase) {
   try {
-    await seedDemoData(postgresPool as any);
-    console.log('✅ Demo data seeded on first boot.');
+    const seedDbPath = path.join(path.dirname(new URL(import.meta.url).pathname), 'seed.db');
+    if (fs.existsSync(seedDbPath)) {
+      fs.mkdirSync(dataRootDir, { recursive: true });
+      fs.copyFileSync(seedDbPath, path.join(dataRootDir, 'pos.db'));
+      console.log('✅ Pre-seeded demo database copied to /tmp.');
+    } else {
+      await seedDemoData(postgresPool as any);
+      console.log('✅ Demo data seeded on first boot.');
+    }
   } catch (err) {
     console.warn('⚠️ Demo seed skipped:', err instanceof Error ? err.message : err);
   }

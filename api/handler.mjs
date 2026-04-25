@@ -15347,8 +15347,15 @@ await ensureRootSystemOwner({
 });
 if (isNewDatabase) {
   try {
-    await seedDemoData(postgresPool);
-    console.log("\u2705 Demo data seeded on first boot.");
+    const seedDbPath = path6.join(path6.dirname(new URL(import.meta.url).pathname), "seed.db");
+    if (fs5.existsSync(seedDbPath)) {
+      fs5.mkdirSync(dataRootDir, { recursive: true });
+      fs5.copyFileSync(seedDbPath, path6.join(dataRootDir, "pos.db"));
+      console.log("\u2705 Pre-seeded demo database copied to /tmp.");
+    } else {
+      await seedDemoData(postgresPool);
+      console.log("\u2705 Demo data seeded on first boot.");
+    }
   } catch (err) {
     console.warn("\u26A0\uFE0F Demo seed skipped:", err instanceof Error ? err.message : err);
   }

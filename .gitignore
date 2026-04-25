@@ -29,3 +29,5 @@ server.mjs
 *.db
 *.db-shm
 *.db-wal
+.vercel
+!api/seed.db

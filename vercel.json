@@ -15,6 +15,7 @@
         "includeFiles": [
           "shims/**",
           "database/**",
+          "api/seed.db",
           "node_modules/sql.js/dist/**"
         ]
       }
