@@ -9753,7 +9753,7 @@ var createCoreReadRepository = ({ postgresPool: postgresPool2 }) => {
           COALESCE(SUM(s.total), 0) as total_investment,
           MAX(s.timestamp) as last_visit,
           COALESCE((
-            SELECT SUM(MAX(0, COALESCE(s2.amount_due, 0)))
+            SELECT 0
             FROM sales s2
             WHERE s2.customer_id = c.id AND s2.store_id = c.store_id
               AND s2.status IN ('PENDING', 'LAYAWAY', 'INSTALLMENT')
