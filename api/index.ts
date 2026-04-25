@@ -33,8 +33,8 @@ import {
   safeJsonParse,
 } from '../serverSharedHelpers.js';
 import { HIGH_RISK_AUDIT_ACTIONS } from '../serverBusinessHelpers.js';
-import { seedDemoData } from '../serverDemoSeeder.js';
 import { SEED_DB_BASE64 } from './seedData.js';
+import { seedDemoData } from '../serverDemoSeeder.js';
 
 dotenv.config();
 
@@ -59,7 +59,12 @@ const {
   makeSafeTimestamp,
 } = initializeRuntimeEnvironment(appBaseDir);
 
-const isNewDatabase = !fs.existsSync(path.join(dataRootDir, 'pos.db'));
+const dbFilePath = path.join(dataRootDir, 'pos.db');
+if (!fs.existsSync(dbFilePath)) {
+  fs.mkdirSync(dataRootDir, { recursive: true });
+  fs.writeFileSync(dbFilePath, Buffer.from(SEED_DB_BASE64, 'base64'));
+  console.log('✅ Pre-seeded demo database written to /tmp on cold start.');
+}
 
 const {
   selectedProvider: databaseProvider,
@@ -153,16 +158,6 @@ await ensureRootSystemOwner({
   initialAdminPassword: process.env.INITIAL_ADMIN_PASSWORD || 'ChangeMe123!',
 });
 
-// On cold start, copy pre-seeded DB instead of seeding from scratch (faster)
-if (isNewDatabase) {
-  try {
-    fs.mkdirSync(dataRootDir, { recursive: true });
-    fs.writeFileSync(path.join(dataRootDir, 'pos.db'), Buffer.from(SEED_DB_BASE64, 'base64'));
-    console.log('✅ Pre-seeded demo database written to /tmp.');
-  } catch (err) {
-    console.warn('⚠️ Demo seed skipped:', err instanceof Error ? err.message : err);
-  }
-}
 
 const LAN_IP = '';
 const app = createConfiguredApp({ PORT, LAN_IP });

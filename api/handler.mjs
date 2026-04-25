@@ -1136,7 +1136,7 @@ var initializeRuntimeEnvironment = (appBaseDir2) => {
   const hasProductionBuild = fs.existsSync(path2.join(appBaseDir2, "server.mjs")) && fs.existsSync(path2.join(appBaseDir2, "dist", "index.html"));
   const NODE_ENV2 = process.env.NODE_ENV || (isDesktopRuntime2 || hasProductionBuild ? "production" : "development");
   process.env.NODE_ENV = NODE_ENV2;
-  const dbFilePath = path2.join(dataRootDir2, "pos.db");
+  const dbFilePath2 = path2.join(dataRootDir2, "pos.db");
   const makeSafeTimestamp2 = (date = /* @__PURE__ */ new Date()) => date.toISOString().replace(/[:.]/g, "-");
   return {
     dataRootDir: dataRootDir2,
@@ -1144,7 +1144,7 @@ var initializeRuntimeEnvironment = (appBaseDir2) => {
     uploadsDir: uploadsDir2,
     dailyBackupDir: dailyBackupDir2,
     safetySnapshotDir: safetySnapshotDir2,
-    dbFilePath,
+    dbFilePath: dbFilePath2,
     isDesktopRuntime: isDesktopRuntime2,
     NODE_ENV: NODE_ENV2,
     makeSafeTimestamp: makeSafeTimestamp2
@@ -15263,7 +15263,12 @@ var {
   NODE_ENV,
   makeSafeTimestamp
 } = initializeRuntimeEnvironment(appBaseDir);
-var isNewDatabase = !fs5.existsSync(path6.join(dataRootDir, "pos.db"));
+var dbFilePath = path6.join(dataRootDir, "pos.db");
+if (!fs5.existsSync(dbFilePath)) {
+  fs5.mkdirSync(dataRootDir, { recursive: true });
+  fs5.writeFileSync(dbFilePath, Buffer.from(SEED_DB_BASE64, "base64"));
+  console.log("\u2705 Pre-seeded demo database written to /tmp on cold start.");
+}
 var {
   selectedProvider: databaseProvider,
   postgresPool,
@@ -15348,15 +15353,6 @@ await ensureRootSystemOwner({
   postgresPool,
   initialAdminPassword: process.env.INITIAL_ADMIN_PASSWORD || "ChangeMe123!"
 });
-if (isNewDatabase) {
-  try {
-    fs5.mkdirSync(dataRootDir, { recursive: true });
-    fs5.writeFileSync(path6.join(dataRootDir, "pos.db"), Buffer.from(SEED_DB_BASE64, "base64"));
-    console.log("\u2705 Pre-seeded demo database written to /tmp.");
-  } catch (err) {
-    console.warn("\u26A0\uFE0F Demo seed skipped:", err instanceof Error ? err.message : err);
-  }
-}
 var LAN_IP = "";
 var app = createConfiguredApp({ PORT, LAN_IP });
 registerApplicationRoutes({
