@@ -234,13 +234,12 @@ export async function seedDemoData(pool: any): Promise<{ message: string }> {
         [gtId,`TH-TKT-${String(ti++).padStart(4,'0')}`,cn,ph,dev,br,issue,tech,st,est,fin,paid,dateAgo(rnd(1,10)),gtMId,daysAgo(rnd(1,10))],
       );
 
-    // Layaway plan
+    // Layaway plan — use only $N params (no mixed inline literals) for SQLite compat
     const layR = await client.query(
-      `INSERT INTO sales (store_id,subtotal,total,user_id,payment_methods,status,sale_channel,customer_id,payment_plan,locked_until_paid,due_date,note,timestamp) VALUES ($1,1299,1299,$2,$3,'PENDING','LAYAWAY',$4,$5,1,$6,'Layaway — $300 down, $999 balance over 3 months',$7) RETURNING id`,
-      [gtId,gtMId,JSON.stringify({cash:300,transfer:0,pos:0}),gtCustIds[2],JSON.stringify({type:'LAYAWAY',installment_count:3,payment_frequency:'MONTHLY',deposit_paid:300,balance_due:999,schedule:[]}),dateAgo(30),daysAgo(7)],
-      // note: amount_due omitted — has DB default (0)
+      `INSERT INTO sales (store_id,subtotal,total,user_id,payment_methods,status,sale_channel,customer_id,payment_plan,locked_until_paid,due_date,note,timestamp) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id`,
+      [gtId,1299,1299,gtMId,JSON.stringify({cash:300,transfer:0,pos:0}),'PENDING','LAYAWAY',gtCustIds[2],JSON.stringify({type:'LAYAWAY',installment_count:3,payment_frequency:'MONTHLY',deposit_paid:300,balance_due:999,schedule:[]}),1,dateAgo(30),'Layaway — $300 down, $999 balance over 3 months',daysAgo(7)],
     );
-    await client.query(`INSERT INTO sale_items (sale_id,product_id,quantity,price_at_sale,base_price_at_sale,subtotal,condition) VALUES ($1,$2,1,1299,1299,1299,'NEW')`,[Number(layR.rows[0].id),gtPIds[3]]);
+    await client.query(`INSERT INTO sale_items (sale_id,product_id,quantity,price_at_sale,base_price_at_sale,subtotal,condition) VALUES ($1,$2,$3,$4,$5,$6,$7)`,[Number(layR.rows[0].id),gtPIds[3],1,1299,1299,1299,'NEW']);
 
     // Suppliers & POs
     const sup1 = await client.query(`INSERT INTO suppliers (store_id,name,phone,email,address) VALUES ($1,'D&H Distributing','(800) 555-0300','orders@dandh.com','2525 N 7th St, Harrisburg, PA') RETURNING id`,[gtId]);
