@@ -1,0 +1,18 @@
+<svg width="900" height="1200" viewBox="0 0 900 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1200" fill="#0F172A"/>
+  <circle cx="740" cy="180" r="170" fill="#F97316" fill-opacity="0.14"/>
+  <circle cx="220" cy="980" r="220" fill="#F59E0B" fill-opacity="0.12"/>
+  <rect x="70" y="70" width="760" height="1060" rx="42" fill="url(#paint0_linear)" stroke="#334155"/>
+  <circle cx="450" cy="330" r="130" fill="#1E293B"/>
+  <path d="M240 820C240 702.29 335.29 607 453 607H447C564.71 607 660 702.29 660 820V930H240V820Z" fill="#111827"/>
+  <circle cx="450" cy="330" r="96" fill="#F97316" fill-opacity="0.18"/>
+  <text x="450" y="355" text-anchor="middle" fill="white" font-size="76" font-family="Arial, sans-serif" font-weight="700">GC</text>
+  <text x="450" y="1010" text-anchor="middle" fill="#E2E8F0" font-size="32" font-family="Arial, sans-serif" font-weight="700">Developer Photo</text>
+  <text x="450" y="1054" text-anchor="middle" fill="#94A3B8" font-size="22" font-family="Arial, sans-serif">Replace with public/developer-photo.jpg</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="70" y1="70" x2="830" y2="1130" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827"/>
+      <stop offset="1" stop-color="#1E293B"/>
+    </linearGradient>
+  </defs>
+</svg>

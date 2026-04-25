@@ -1,0 +1,25 @@
+{
+  "short_name": "Goody POS",
+  "name": "Goody Point of Sale",
+  "description": "Modern web POS for retail, supermarkets, and gadget stores.",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pwa-icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#09090b",
+  "background_color": "#09090b"
+}

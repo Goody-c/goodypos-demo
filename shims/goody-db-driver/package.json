@@ -1,0 +1,11 @@
+{
+  "name": "goody-db-driver",
+  "version": "0.0.0-postgres-compat",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "private": true,
+  "dependencies": {
+    "sql.js": "^1.13.0"
+  }
+}

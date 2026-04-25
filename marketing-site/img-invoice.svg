@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="800" viewBox="0 0 560 800" font-family="'Segoe UI',Arial,sans-serif">
+  <defs>
+    <filter id="card-shadow" x="-4%" y="-2%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#000" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- Paper background -->
+  <rect width="560" height="800" rx="8" fill="white" filter="url(#card-shadow)"/>
+
+  <!-- Left border accent line -->
+  <rect x="0" y="0" width="5" height="800" rx="3" fill="#e53e3e"/>
+
+  <!-- SIGNATURE / LOGO -->
+  <g transform="translate(36,28)" fill="none" stroke="#111" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8,38 C12,20 20,10 28,14 C36,18 32,34 26,36 C20,38 16,30 20,26 C26,20 36,22 44,26"/>
+    <path d="M44,26 C50,28 54,32 52,38 C50,44 44,46 40,42"/>
+    <path d="M28,50 C30,48 36,44 42,46 C48,48 52,54 48,58 C44,62 36,60 34,56 C32,52 36,48 42,48 C50,48 56,54 58,60"/>
+    <path d="M18,56 C22,62 28,68 32,66"/>
+  </g>
+
+  <!-- Store name -->
+  <text x="36" y="118" font-size="18" font-weight="900" fill="#111">GoodyTech Store</text>
+  <text x="36" y="138" font-size="11" fill="#555">123 Market Street, Chicago, IL 60601</text>
+  <text x="36" y="153" font-size="11" fill="#555">+1 800 555 0190</text>
+
+  <!-- Invoice title top-right -->
+  <text x="524" y="64" font-size="22" font-weight="900" fill="#111" text-anchor="end">Invoice 000042</text>
+  <text x="524" y="82" font-size="11" fill="#888" text-anchor="end">Tax invoice</text>
+
+  <!-- Divider -->
+  <line x1="36" y1="172" x2="524" y2="172" stroke="#e8e8e8" stroke-width="1"/>
+
+  <!-- BILL TO -->
+  <text x="36" y="196" font-size="10" font-weight="900" fill="#111" letter-spacing="0.8">BILL TO</text>
+  <text x="36" y="215" font-size="12" font-weight="700" fill="#111">James Carter</text>
+  <text x="36" y="231" font-size="11" fill="#555">Phone: +1 415 555 0192</text>
+  <text x="36" y="247" font-size="11" fill="#555">San Francisco, CA 94103</text>
+
+  <!-- Dates right column -->
+  <text x="340" y="210" font-size="11" fill="#888">Issue date:</text>
+  <text x="524" y="210" font-size="11" font-weight="700" fill="#111" text-anchor="end">Apr 22, 2026</text>
+
+  <text x="340" y="232" font-size="11" fill="#888">Due date:</text>
+  <text x="524" y="232" font-size="11" font-weight="700" fill="#111" text-anchor="end">Apr 22, 2026</text>
+
+  <text x="340" y="254" font-size="11" fill="#888">Reference:</text>
+  <text x="524" y="254" font-size="11" font-weight="700" fill="#111" text-anchor="end">000042</text>
+
+  <!-- SUMMARY BAR -->
+  <rect x="36" y="278" width="476" height="66" rx="4" fill="#e53e3e"/>
+  <rect x="388" y="278" width="128" height="66" rx="0" fill="#3d3d3d"/>
+  <rect x="504" y="278" width="8" height="66" rx="4" fill="#3d3d3d"/>
+
+  <!-- Bar labels -->
+  <text x="52" y="300" font-size="10" font-weight="800" fill="white">Invoice No.</text>
+  <text x="200" y="300" font-size="10" font-weight="800" fill="white">Issue date</text>
+  <text x="316" y="300" font-size="10" font-weight="800" fill="white">Due date</text>
+  <text x="400" y="300" font-size="10" font-weight="800" fill="white">Invoice total</text>
+
+  <!-- Bar values -->
+  <text x="52" y="326" font-size="14" font-weight="900" fill="white">000042</text>
+  <text x="200" y="326" font-size="14" font-weight="900" fill="white">Apr 22, 2026</text>
+  <text x="316" y="326" font-size="14" font-weight="900" fill="white">Apr 22, 2026</text>
+  <text x="516" y="326" font-size="15" font-weight="900" fill="white" text-anchor="end">$1,019</text>
+
+  <!-- LINE ITEMS TABLE -->
+  <rect x="36" y="362" width="488" height="120" rx="4" fill="none" stroke="#ddd" stroke-width="1"/>
+  <rect x="36" y="362" width="488" height="32" rx="4" fill="#f7f7f7"/>
+  <rect x="36" y="382" width="488" height="12" fill="#f7f7f7"/>
+
+  <!-- Column dividers -->
+  <line x1="310" y1="362" x2="310" y2="482" stroke="#ddd" stroke-width="1"/>
+  <line x1="390" y1="362" x2="390" y2="482" stroke="#ddd" stroke-width="1"/>
+  <line x1="460" y1="362" x2="460" y2="482" stroke="#ddd" stroke-width="1"/>
+
+  <!-- Header labels -->
+  <text x="52" y="382" font-size="11" font-weight="800" fill="#111">Description</text>
+  <text x="350" y="382" font-size="11" font-weight="800" fill="#111" text-anchor="middle">Quantity</text>
+  <text x="425" y="382" font-size="11" font-weight="800" fill="#111" text-anchor="middle">Unit price</text>
+  <text x="516" y="382" font-size="11" font-weight="800" fill="#111" text-anchor="end">Amount</text>
+
+  <!-- Row divider -->
+  <line x1="36" y1="394" x2="524" y2="394" stroke="#ddd" stroke-width="1"/>
+
+  <!-- Row 1 -->
+  <text x="52" y="416" font-size="12" font-weight="700" fill="#111">iPhone 15 Pro 128GB</text>
+  <text x="52" y="432" font-size="11" fill="#555">Condition: NEW</text>
+  <text x="350" y="424" font-size="12" fill="#333" text-anchor="middle">1</text>
+  <text x="425" y="424" font-size="12" fill="#333" text-anchor="middle">$999</text>
+  <text x="516" y="424" font-size="12" font-weight="700" fill="#111" text-anchor="end">$999</text>
+
+  <!-- Row divider 2 -->
+  <line x1="36" y1="444" x2="524" y2="444" stroke="#ddd" stroke-width="1"/>
+
+  <!-- Row 2 -->
+  <text x="52" y="462" font-size="12" font-weight="700" fill="#111">Screen Protector</text>
+  <text x="350" y="462" font-size="12" fill="#333" text-anchor="middle">2</text>
+  <text x="425" y="462" font-size="12" fill="#333" text-anchor="middle">$4</text>
+  <text x="516" y="462" font-size="12" font-weight="700" fill="#111" text-anchor="end">$8</text>
+
+  <!-- Row divider 3 (outer bottom already drawn) -->
+  <line x1="36" y1="476" x2="524" y2="476" stroke="#ddd" stroke-width="1"/>
+
+  <!-- Row 3 (extra space) -->
+  <!-- end of table rect at y=482 -->
+
+  <!-- FOOTER SECTION -->
+  <!-- Terms left -->
+  <text x="36" y="526" font-size="13" font-weight="900" fill="#111">Terms &amp; Conditions</text>
+  <text x="36" y="545" font-size="11" fill="#888">Thank you for your business!</text>
+
+  <!-- Totals right -->
+  <text x="320" y="526" font-size="12" font-weight="700" fill="#111">Subtotal:</text>
+  <text x="516" y="526" font-size="12" font-weight="700" fill="#111" text-anchor="end">$1,019</text>
+
+  <text x="320" y="548" font-size="12" fill="#555">Tax (7.5%)</text>
+  <text x="516" y="548" font-size="12" fill="#555" text-anchor="end">$76.43</text>
+
+  <text x="320" y="570" font-size="12" font-weight="700" fill="#111">Amount paid:</text>
+  <text x="516" y="570" font-size="12" font-weight="700" fill="#111" text-anchor="end">$1,019</text>
+
+  <text x="320" y="592" font-size="12" font-weight="700" fill="#111">Outstanding balance:</text>
+  <text x="516" y="592" font-size="12" font-weight="700" fill="#111" text-anchor="end">$0</text>
+
+  <!-- Total bar -->
+  <rect x="316" y="608" width="200" height="44" rx="6" fill="#e53e3e"/>
+  <text x="336" y="635" font-size="14" font-weight="900" fill="white">Total:</text>
+  <text x="508" y="635" font-size="16" font-weight="900" fill="white" text-anchor="end">$1,019</text>
+
+  <!-- Issued by -->
+  <text x="516" y="676" font-size="11" fill="#555" text-anchor="end">Issued by, signature:</text>
+
+  <!-- Signature at bottom right -->
+  <g transform="translate(424,684)" fill="none" stroke="#111" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8,32 C12,16 20,8 26,11 C32,14 30,28 24,30 C18,32 15,24 18,20 C24,14 32,16 38,20"/>
+    <path d="M38,20 C43,22 46,26 45,32 C43,38 37,40 33,36"/>
+    <path d="M22,44 C24,42 30,38 36,40 C42,42 45,47 41,51 C38,55 30,53 28,49"/>
+    <path d="M14,48 C17,53 22,58 26,56"/>
+  </g>
+
+  <!-- Signature underline -->
+  <line x1="380" y1="754" x2="516" y2="754" stroke="#ddd" stroke-width="1"/>
+
+  <!-- Footer note -->
+  <text x="280" y="782" font-size="9" fill="#bbb" text-anchor="middle">Generated by GoodyPOS · goodypos.com</text>
+</svg>

@@ -1,0 +1,6 @@
+{
+  "name": "Goody POS",
+  "version": "1.6.0",
+  "description": "High-performance, full-stack Point of Sale application with RBAC, analytics, and audit vault.",
+  "requestFramePermissions": []
+}
