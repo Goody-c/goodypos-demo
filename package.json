@@ -11,7 +11,7 @@
     "dev:raw": "tsx server.ts",
     "start": "node server.mjs",
     "build": "vite build",
-    "vercel-build": "vite build && esbuild api/index.ts --bundle --platform=node --format=esm --packages=external --outfile=api/server.mjs --external:sql.js --external:bcryptjs --external:jsonwebtoken --external:pg --external:dotenv --external:sharp --external:multer",
+    "vercel-build": "vite build && esbuild api/index.ts --bundle --platform=node --format=esm --packages=external --outfile=api/handler.mjs --external:sql.js --external:bcryptjs --external:jsonwebtoken --external:pg --external:dotenv --external:sharp --external:multer",
     "build:server": "esbuild server.ts --bundle --platform=node --format=esm --packages=external --outfile=server.mjs",
     "preview": "vite preview",
     "clean": "node -e \"const fs=require('node:fs'); fs.rmSync('dist',{recursive:true,force:true}); fs.rmSync('server.mjs',{force:true});\"",
