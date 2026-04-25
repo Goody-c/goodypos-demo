@@ -155,13 +155,14 @@ export async function seedDemoData(pool: any): Promise<{ message: string }> {
     }
 
     const gtPIds: number[] = [];
+    let gtQC = 11101;
     for (const p of GT_PRODUCTS) {
       const matrix = 'matrix' in p && p.matrix
         ? JSON.stringify(Object.fromEntries(Object.entries((p as any).matrix).map(([k,v]: [string,any])=>[k,{stock:v.stock,price:v.price,cost:(p as any).cost}])))
         : null;
       const r = await client.query(
-        `INSERT INTO products (store_id,name,category,category_id,price,cost,stock,condition_matrix) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
-        [gtId,p.name,p.category,gtCatIds[p.category],p.price,(p as any).cost,(p as any).stock??0,matrix],
+        `INSERT INTO products (store_id,name,category,category_id,price,cost,stock,condition_matrix,quick_code) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id`,
+        [gtId,p.name,p.category,gtCatIds[p.category],p.price,(p as any).cost,(p as any).stock??0,matrix,String(gtQC++)],
       );
       gtPIds.push(Number(r.rows[0].id));
     }
@@ -336,8 +337,9 @@ export async function seedDemoData(pool: any): Promise<{ message: string }> {
     }
 
     const smPIds: number[] = [];
+    let smQC = 22101;
     for (const p of SM_PRODUCTS) {
-      const r = await client.query(`INSERT INTO products (store_id,name,category,category_id,price,cost,stock) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id`,[smId,p.name,p.category,smCatIds[p.category],p.price,p.cost,p.stock]);
+      const r = await client.query(`INSERT INTO products (store_id,name,category,category_id,price,cost,stock,quick_code) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,[smId,p.name,p.category,smCatIds[p.category],p.price,p.cost,p.stock,String(smQC++)]);
       smPIds.push(Number(r.rows[0].id));
     }
 
