@@ -506,6 +506,21 @@ export async function seedDemoData(pool: any): Promise<{ message: string }> {
       );
     }
 
+    // FreshMart consignment vendor items
+    let smCIQC = 33101;
+    for (const [vendor,phone,item,qty,payout,selling,status,cond] of [
+      ['Green Valley Farms',    '(312) 555-0181','Organic Honey 12oz (6-Pack)',    6,  28, 42, 'approved','New'],
+      ['Sunrise Bakery Co.',    '(773) 555-0192','Artisan Sourdough Loaves',       4,  18, 28, 'approved','New'],
+      ['Local Harvest LLC',     '(847) 555-0203','Fresh Herb Bundle — Basil & Mint',8, 12, 18, 'approved','New'],
+      ['Prairie Dairy Works',   '(630) 555-0214','Small-Batch Butter 8oz (4-Pack)', 4, 22, 34, 'approved','New'],
+      ['Great Lakes Roasters',  '(312) 555-0225','Craft Coffee Blend 12oz',        5, 16, 26, 'pending', 'New'],
+      ['Midwest Pickle Co.',    '(708) 555-0236','Dill Pickle Jars (3-Pack)',       6, 14, 22, 'approved','New'],
+    ] as [string,string,string,number,number,number,string,string][])
+      await client.query(
+        `INSERT INTO consignment_items (store_id,quick_code,vendor_name,vendor_phone,item_name,quantity,agreed_payout,selling_price,status,public_specs,internal_condition,added_by,approved_by,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+        [smId,String(smCIQC++),vendor,phone,item,qty,payout,selling,status,'{}',cond,smOId,status!=='pending'?smMId:null,daysAgo(rnd(2,10))],
+      );
+
     await client.query('COMMIT');
     return { message: 'Demo data seeded! TechHub Electronics (Smart Retail) + FreshMart Grocery (Supermarket) are ready with 30 days of activity.' };
   } catch (err: any) {
