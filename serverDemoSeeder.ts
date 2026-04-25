@@ -249,6 +249,29 @@ export async function seedDemoData(pool: any): Promise<{ message: string }> {
       );
     }
 
+    // Sourced items (sold via POS with sourced_item flag in specs_at_sale)
+    for (const [ownerName,ref,itemName,price,cost,daysBack] of [
+      ['Kevin Blake',    'KB-2024-01','iPhone 14 128GB',          899,  620, 18],
+      ['Marcus Webb',    'MW-2024-02','Samsung Galaxy S22 Ultra',  749,  510, 15],
+      ['Derek Nguyen',   'DN-2024-03','MacBook Air M2 13in',      1099,  850, 12],
+      ['Kevin Blake',    'KB-2024-04','iPad 10th Gen 64GB',        499,  340, 10],
+      ['Angela Foster',  'AF-2024-05','Google Pixel 8 128GB',      649,  470,  8],
+      ['Marcus Webb',    'MW-2024-06','Sony WH-1000XM4',           379,  260,  6],
+      ['Derek Nguyen',   'DN-2024-07','Dell XPS 13 i5 16GB',      1349, 1050,  4],
+      ['Angela Foster',  'AF-2024-08','iPhone 13 256GB',           829,  600,  2],
+    ] as [string,string,string,number,number,number][]) {
+      const saleR = await client.query(
+        `INSERT INTO sales (store_id,subtotal,total,user_id,payment_methods,status,timestamp) VALUES ($1,$2,$3,$4,$5,'COMPLETED',$6) RETURNING id`,
+        [gtId,price,price,gtMId,JSON.stringify({cash:price,transfer:0,pos:0}),daysAgo(daysBack)],
+      );
+      const saleId = Number(saleR.rows[0].id);
+      await client.query(
+        `INSERT INTO sale_items (sale_id,product_id,quantity,price_at_sale,base_price_at_sale,subtotal,cost_at_sale,specs_at_sale) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+        [saleId,gtPIds[0],1,price,price,price,cost,
+         JSON.stringify({sourced_item:true,sourced_vendor_name:ownerName,sourced_vendor_reference:ref,sourced_item_name:itemName,sourced_cost_price:cost})],
+      );
+    }
+
     // Repair tickets
     let ti=1;
     for (const [cn,ph,dev,br,issue,tech,st,est,fin,paid] of [
