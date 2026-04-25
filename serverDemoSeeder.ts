@@ -174,6 +174,8 @@ export async function seedDemoData(pool: any): Promise<{ message: string }> {
     }
 
     // 30 days of sales
+    const gtSaleIds: number[] = [];
+    const gtSaleItemIds: number[] = [];
     for (let day=29;day>=0;day--) {
       for (let s=0;s<rnd(2,6);s++) {
         const pi = rnd(0,GT_PRODUCTS.length-1);
@@ -188,10 +190,13 @@ export async function seedDemoData(pool: any): Promise<{ message: string }> {
           `INSERT INTO sales (store_id,subtotal,total,user_id,payment_methods,status,customer_id,timestamp) VALUES ($1,$2,$2,$3,$4,'COMPLETED',$5,$6) RETURNING id`,
           [gtId,sub,userId,JSON.stringify(pay),custId,daysAgo(day)],
         );
-        await client.query(
-          `INSERT INTO sale_items (sale_id,product_id,quantity,price_at_sale,base_price_at_sale,subtotal,cost_at_sale,condition) VALUES ($1,$2,$3,$4,$4,$5,$6,$7)`,
-          [Number(sr.rows[0].id),gtPIds[pi],qty,price,sub,(prod as any).cost,cond],
+        const saleId = Number(sr.rows[0].id);
+        const sir = await client.query(
+          `INSERT INTO sale_items (sale_id,product_id,quantity,price_at_sale,base_price_at_sale,subtotal,cost_at_sale,condition) VALUES ($1,$2,$3,$4,$4,$5,$6,$7) RETURNING id`,
+          [saleId,gtPIds[pi],qty,price,sub,(prod as any).cost,cond],
         );
+        gtSaleIds.push(saleId);
+        gtSaleItemIds.push(Number(sir.rows[0].id));
       }
     }
 
@@ -220,6 +225,29 @@ export async function seedDemoData(pool: any): Promise<{ message: string }> {
         `INSERT INTO consignment_items (store_id,quick_code,vendor_name,vendor_phone,item_name,quantity,agreed_payout,selling_price,status,public_specs,internal_condition,added_by,approved_by,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
         [gtId,quickCode,vendor,phone,item,qty,payout,selling,status,'{}',cond,gtCId,status!=='pending'?gtMId:null,daysAgo(rnd(3,15))],
       );
+
+    // Vendor payables
+    for (const [vendor,ref,item,amount,status,settledDaysAgo,note,sourceType] of [
+      ['Jake\'s Pre-Owned Phones',   'VID-GT-001','iPhone 14 Pro 128GB',          720,  'SETTLED', 12, 'Paid via Zelle',      'CONSIGNMENT'],
+      ['Tech Resale Co.',            'VID-GT-002','Samsung Galaxy S23 Ultra',     550,  'SETTLED',  9, 'Bank transfer',       'CONSIGNMENT'],
+      ['Rivera Electronics',         'VID-GT-003','iPhone 13 Pro Max 256GB',      580,  'UNPAID',   0, null,                  'CONSIGNMENT'],
+      ['Sunset Tech Trades',         'VID-GT-004','iPad Air 5th Gen 64GB',        390,  'UNPAID',   0, 'Pending pickup',      'CONSIGNMENT'],
+      ['Pacific Resellers',          'VID-GT-005','Google Pixel 7 Pro 128GB',     320,  'UNPAID',   0, null,                  'CONSIGNMENT'],
+      ['Midwest Device Hub',         'VID-GT-006','Samsung Galaxy Z Flip5',       560,  'SETTLED',  2, 'Cash on delivery',    'CONSIGNMENT'],
+      ['Capital Gadget Exchange',    'VID-GT-007','MacBook Air 13in M1 8GB',      680,  'UNPAID',   0, null,                  'CONSIGNMENT'],
+      ['Lone Star Tech',             'VID-GT-008','Apple Watch Series 8 GPS 45mm',220,  'SETTLED',  1, 'Venmo',               'CONSIGNMENT'],
+      ['Metro Device Exchange',      'VID-GT-009','MacBook Pro M2 14in 16GB',    1400,  'UNPAID',   0, 'Awaiting invoice',    'CONSIGNMENT'],
+      ['Jake\'s Pre-Owned Phones',   'VID-GT-010','iPhone 14 Pro 128GB (2nd)',    720,  'UNPAID',   0, null,                  'CONSIGNMENT'],
+    ] as [string,string,string,number,string,number,string|null,string][]) {
+      const si = gtSaleIds.length > 0 ? gtSaleIds[rnd(0,Math.min(9,gtSaleIds.length-1))] : 1;
+      const sii = gtSaleItemIds.length > 0 ? gtSaleItemIds[rnd(0,Math.min(9,gtSaleItemIds.length-1))] : 1;
+      await client.query(
+        `INSERT INTO vendor_payables (store_id,sale_id,sale_item_id,vendor_name,vendor_reference,item_name,amount_due,status,settled_at,note,created_at,source_type) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+        [gtId,si,sii,vendor,ref,item,amount,status,
+         status==='SETTLED'?daysAgo(settledDaysAgo):null,
+         note,daysAgo(rnd(5,20)),sourceType],
+      );
+    }
 
     // Repair tickets
     let ti=1;
