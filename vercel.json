@@ -9,14 +9,12 @@
       }
     },
     {
-      "src": "api/index.ts",
+      "src": "api/server.mjs",
       "use": "@vercel/node",
       "config": {
         "includeFiles": [
-          "server*.ts",
           "shims/**",
           "database/**",
-          "scripts/init-postgres-schema.mjs",
           "node_modules/sql.js/dist/**"
         ]
       }
@@ -28,8 +26,12 @@
   ],
   "routes": [
     {
+      "src": "/api/reset",
+      "dest": "/api/reset.ts"
+    },
+    {
       "src": "/api/(.*)",
-      "dest": "/api/index.ts"
+      "dest": "/api/server.mjs"
     },
     {
       "handle": "filesystem"
