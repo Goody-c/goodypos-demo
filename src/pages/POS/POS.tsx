@@ -3081,46 +3081,46 @@ const POS: React.FC = () => {
                           <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-amber-900/200/15">
                             <Clock size={12} className="text-amber-400" />
                           </div>
-                          <span className="text-[11px] font-black uppercase tracking-widest text-amber-400/80">Pending Options</span>
+                          <span className="text-[11px] font-black uppercase tracking-widest text-amber-700">Pending Options</span>
                         </div>
-                        <span className="rounded-lg bg-slate-800 px-2.5 py-1 text-xs font-black text-amber-400">
+                        <span className="rounded-lg bg-amber-700 px-2.5 py-1 text-xs font-black text-white">
                           Due: {formatCurrency(remainingBalance)}
                         </span>
                       </div>
 
                       <div className="mb-3 grid gap-2 sm:grid-cols-2">
-                        <label className={`flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 transition-colors ${allowPayLater ? 'border-amber-600/50 bg-amber-900/20' : 'border-slate-700 bg-slate-800/50 hover:border-amber-700/40'}`}>
-                          <input type="checkbox" checked={allowPayLater} onChange={(e) => setAllowPayLater(e.target.checked)} className="mt-0.5 accent-amber-500" />
+                        <label className={`flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 transition-colors ${allowPayLater ? 'border-amber-500 bg-amber-100' : 'border-amber-300 bg-white/60 hover:border-amber-400'}`}>
+                          <input type="checkbox" checked={allowPayLater} onChange={(e) => setAllowPayLater(e.target.checked)} className="mt-0.5 accent-amber-600" />
                           <span>
-                            <span className="block text-sm font-bold text-white">Pay Later / Debt</span>
-                            <span className="text-xs text-slate-400">Save with outstanding balance.</span>
+                            <span className="block text-sm font-bold text-slate-900">Pay Later / Debt</span>
+                            <span className="text-xs text-slate-600">Save with outstanding balance.</span>
                           </span>
                         </label>
-                        <label className={`flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 transition-colors ${isPendingTransfer ? 'border-sky-600/50 bg-sky-900/20' : 'border-slate-700 bg-slate-800/50 hover:border-sky-700/40'}`}>
-                          <input type="checkbox" checked={isPendingTransfer} onChange={(e) => setIsPendingTransfer(e.target.checked)} className="mt-0.5 accent-blue-500" />
+                        <label className={`flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 transition-colors ${isPendingTransfer ? 'border-sky-500 bg-sky-100' : 'border-amber-300 bg-white/60 hover:border-sky-400'}`}>
+                          <input type="checkbox" checked={isPendingTransfer} onChange={(e) => setIsPendingTransfer(e.target.checked)} className="mt-0.5 accent-blue-600" />
                           <span>
-                            <span className="block text-sm font-bold text-white">Pending Transfer</span>
-                            <span className="text-xs text-slate-400">Bank alert not landed yet.</span>
+                            <span className="block text-sm font-bold text-slate-900">Pending Transfer</span>
+                            <span className="text-xs text-slate-600">Bank alert not landed yet.</span>
                           </span>
                         </label>
                       </div>
 
                       <div className="grid gap-2 sm:grid-cols-2">
                         <div>
-                          <label className="mb-1 block text-[11px] font-bold uppercase tracking-widest text-slate-500">Due Date</label>
+                          <label className="mb-1 block text-[11px] font-bold uppercase tracking-widest text-amber-800">Due Date</label>
                           <input type="date" value={saleDueDate} onChange={(e) => setSaleDueDate(e.target.value)}
-                            className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
+                            className="w-full rounded-xl border border-amber-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block text-[11px] font-bold uppercase tracking-widest text-slate-500">Debt Note</label>
+                          <label className="mb-1 block text-[11px] font-bold uppercase tracking-widest text-amber-800">Debt Note</label>
                           <input type="text" value={saleNote} onChange={(e) => setSaleNote(e.target.value)} placeholder="Optional follow-up note"
-                            className="w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                            className="w-full rounded-xl border border-amber-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
                           />
                         </div>
                       </div>
                       {hasOutstandingBalance && !customer && (
-                        <p className="mt-2.5 text-xs font-bold text-amber-500">Attach a customer to track and remind the debt via WhatsApp.</p>
+                        <p className="mt-2.5 text-xs font-bold text-amber-800">Attach a customer to track and remind the debt via WhatsApp.</p>
                       )}
                     </div>
                   )}
