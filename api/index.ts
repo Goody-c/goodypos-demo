@@ -34,6 +34,7 @@ import {
 } from '../serverSharedHelpers.js';
 import { HIGH_RISK_AUDIT_ACTIONS } from '../serverBusinessHelpers.js';
 import { seedDemoData } from '../serverDemoSeeder.js';
+import { SEED_DB_BASE64 } from './seedData.js';
 
 dotenv.config();
 
@@ -155,15 +156,9 @@ await ensureRootSystemOwner({
 // On cold start, copy pre-seeded DB instead of seeding from scratch (faster)
 if (isNewDatabase) {
   try {
-    const seedDbPath = path.join(path.dirname(new URL(import.meta.url).pathname), 'seed.db');
-    if (fs.existsSync(seedDbPath)) {
-      fs.mkdirSync(dataRootDir, { recursive: true });
-      fs.copyFileSync(seedDbPath, path.join(dataRootDir, 'pos.db'));
-      console.log('✅ Pre-seeded demo database copied to /tmp.');
-    } else {
-      await seedDemoData(postgresPool as any);
-      console.log('✅ Demo data seeded on first boot.');
-    }
+    fs.mkdirSync(dataRootDir, { recursive: true });
+    fs.writeFileSync(path.join(dataRootDir, 'pos.db'), Buffer.from(SEED_DB_BASE64, 'base64'));
+    console.log('✅ Pre-seeded demo database written to /tmp.');
   } catch (err) {
     console.warn('⚠️ Demo seed skipped:', err instanceof Error ? err.message : err);
   }
