@@ -1938,20 +1938,20 @@ const POS: React.FC = () => {
                     <p className="text-base font-black leading-tight text-slate-900 truncate">{p.name}</p>
                     <div className="mt-1 flex flex-wrap items-center gap-1.5">
                       {p.is_consignment && (
-                        <span className="rounded-full border border-amber-300 bg-amber-100 px-2 py-[2px] text-[9px] font-black tracking-widest text-amber-400">CONSIGNMENT</span>
+                        <span className="rounded-full border border-amber-400 bg-amber-100 px-2 py-[2px] text-[9px] font-black tracking-widest text-amber-700">CONSIGNMENT</span>
                       )}
                       {p.quick_code && (
                         <span className="rounded-full border border-sky-200 bg-sky-50 px-2 py-[2px] text-[9px] font-black tracking-widest text-sky-600">QC {p.quick_code}</span>
                       )}
-                      <span className="font-mono text-[10px] text-slate-400">{p.barcode || '—'}</span>
+                      <span className="font-mono text-[10px] text-slate-500">{p.barcode || '—'}</span>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-lg font-black text-red-500">{formatCurrency(p.price)}</p>
+                    <p className="text-lg font-black text-red-600">{formatCurrency(p.price)}</p>
                     <span className={`inline-block rounded-lg px-2 py-0.5 text-[10px] font-black ${
-                      p.stock === 0 ? 'bg-slate-100 text-slate-400' :
+                      p.stock === 0 ? 'bg-slate-200 text-slate-600' :
                       p.stock < 5 ? 'bg-red-100 text-red-600 animate-pulse' :
-                      'bg-emerald-900/20 text-emerald-400'
+                      'bg-emerald-100 text-emerald-700'
                     }`}>
                       {p.stock === 0 ? 'Out of stock' : `${p.stock} in stock`}
                     </span>
