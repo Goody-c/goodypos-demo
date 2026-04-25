@@ -1,14 +1,14 @@
 import path from 'path';
 import fs from 'node:fs';
 import dotenv from 'dotenv';
-import { logDatabaseConfiguration, openPrimaryDatabase } from '../serverDatabase';
-import { initializeRuntimeEnvironment, resolveJwtSecret } from '../serverRuntimeEnvironment';
-import { ensureRootSystemOwner } from '../serverSecurity';
-import { runLegacyDatabaseMigrations } from '../serverLegacyMigrations';
-import { createLicenseService } from '../serverLicenseService';
-import { createConfiguredApp, registerApplicationRoutes } from '../serverAppBootstrap';
-import { createServerConfig } from '../serverConfig';
-import { createServerComposition } from '../serverComposition';
+import { logDatabaseConfiguration, openPrimaryDatabase } from '../serverDatabase.js';
+import { initializeRuntimeEnvironment, resolveJwtSecret } from '../serverRuntimeEnvironment.js';
+import { ensureRootSystemOwner } from '../serverSecurity.js';
+import { runLegacyDatabaseMigrations } from '../serverLegacyMigrations.js';
+import { createLicenseService } from '../serverLicenseService.js';
+import { createConfiguredApp, registerApplicationRoutes } from '../serverAppBootstrap.js';
+import { createServerConfig } from '../serverConfig.js';
+import { createServerComposition } from '../serverComposition.js';
 import {
   clampChatCleanupReminderDay,
   clampChatRetentionValue,
@@ -31,9 +31,9 @@ import {
   normalizeStoreDiscountCodes,
   normalizeStoreSignatureImage,
   safeJsonParse,
-} from '../serverSharedHelpers';
-import { HIGH_RISK_AUDIT_ACTIONS } from '../serverBusinessHelpers';
-import { seedDemoData } from '../serverDemoSeeder';
+} from '../serverSharedHelpers.js';
+import { HIGH_RISK_AUDIT_ACTIONS } from '../serverBusinessHelpers.js';
+import { seedDemoData } from '../serverDemoSeeder.js';
 
 dotenv.config();
 
@@ -244,4 +244,26 @@ registerApplicationRoutes({
   createSafetySnapshot: async (reason?: string) => createSafetySnapshot(reason === 'startup' ? 'startup' : 'pre-maintenance'),
 });
 
-export default app;
+app.post('/api/reset', async (req: any, res: any) => {
+  const secret = String(req.headers['x-cron-secret'] || req.query.secret || '');
+  const expectedSecret = process.env.CRON_SECRET || process.env.DEMO_RESET_TOKEN || '';
+
+  if (!expectedSecret || secret !== expectedSecret) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const dbPath = path.join(dataRootDir, 'pos.db');
+    if (fs.existsSync(dbPath)) {
+      fs.rmSync(dbPath, { force: true });
+    }
+    return res.json({ success: true, message: 'Demo database reset. A fresh instance will re-seed on the next request.' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err?.message || 'Reset failed' });
+  }
+});
+
+// Vercel serverless handler
+export default function handler(req: any, res: any) {
+  return app(req, res);
+}
