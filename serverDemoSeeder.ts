@@ -204,20 +204,20 @@ export async function seedDemoData(pool: any): Promise<{ message: string }> {
       await client.query(`INSERT INTO expenses (store_id,title,category,amount,created_by,spent_at) VALUES ($1,$2,$3,$4,$5,$6)`,[gtId,title,category,amount,gtOId,daysAgo(rnd(1,28))]);
 
     // Consignment items
-    for (const [vendor,phone,item,qty,payout,selling,status,cond] of [
-      ['Jake\'s Pre-Owned Phones',     '(646) 555-0011','iPhone 14 Pro 128GB',           2, 720, 850, 'approved','Used'],
-      ['Tech Resale Co.',              '(718) 555-0022','Samsung Galaxy S23 Ultra',       1, 550, 680, 'approved','Open Box'],
-      ['Metro Device Exchange',        '(347) 555-0033','MacBook Pro M2 14" 16GB',        1,1400,1699, 'pending', 'Used'],
-      ['Rivera Electronics',           '(312) 555-0141','iPhone 13 Pro Max 256GB',        1, 580, 719, 'approved','Used'],
-      ['Sunset Tech Trades',           '(424) 555-0182','iPad Air 5th Gen 64GB',          2, 390, 499, 'approved','Open Box'],
-      ['Pacific Resellers',            '(206) 555-0193','Google Pixel 7 Pro 128GB',       1, 320, 429, 'approved','Used'],
-      ['Midwest Device Hub',           '(312) 555-0204','Samsung Galaxy Z Flip5',         1, 560, 699, 'approved','Open Box'],
-      ['Capital Gadget Exchange',      '(202) 555-0215','MacBook Air 13" M1 8GB',         1, 680, 849, 'approved','Used'],
-      ['Lone Star Tech',               '(512) 555-0226','Apple Watch Series 8 GPS 45mm',  2, 220, 299, 'approved','Open Box'],
-    ] as [string,string,string,number,number,number,string,string][])
+    for (const [vendor,phone,item,qty,payout,selling,status,cond,quickCode] of [
+      ['Jake\'s Pre-Owned Phones',     '(646) 555-0011','iPhone 14 Pro 128GB',           2, 720, 850, 'approved','Used',     '11101'],
+      ['Tech Resale Co.',              '(718) 555-0022','Samsung Galaxy S23 Ultra',       1, 550, 680, 'approved','Open Box', '22202'],
+      ['Metro Device Exchange',        '(347) 555-0033','MacBook Pro M2 14" 16GB',        1,1400,1699, 'pending', 'Used',     '33303'],
+      ['Rivera Electronics',           '(312) 555-0141','iPhone 13 Pro Max 256GB',        1, 580, 719, 'approved','Used',     '44404'],
+      ['Sunset Tech Trades',           '(424) 555-0182','iPad Air 5th Gen 64GB',          2, 390, 499, 'approved','Open Box', '55505'],
+      ['Pacific Resellers',            '(206) 555-0193','Google Pixel 7 Pro 128GB',       1, 320, 429, 'approved','Used',     '66606'],
+      ['Midwest Device Hub',           '(312) 555-0204','Samsung Galaxy Z Flip5',         1, 560, 699, 'approved','Open Box', '77707'],
+      ['Capital Gadget Exchange',      '(202) 555-0215','MacBook Air 13" M1 8GB',         1, 680, 849, 'approved','Used',     '88808'],
+      ['Lone Star Tech',               '(512) 555-0226','Apple Watch Series 8 GPS 45mm',  2, 220, 299, 'approved','Open Box', '99909'],
+    ] as [string,string,string,number,number,number,string,string,string][])
       await client.query(
-        `INSERT INTO consignment_items (store_id,vendor_name,vendor_phone,item_name,quantity,agreed_payout,selling_price,status,public_specs,internal_condition,added_by,approved_by,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
-        [gtId,vendor,phone,item,qty,payout,selling,status,'{}',cond,gtCId,status!=='pending'?gtMId:null,daysAgo(rnd(3,15))],
+        `INSERT INTO consignment_items (store_id,quick_code,vendor_name,vendor_phone,item_name,quantity,agreed_payout,selling_price,status,public_specs,internal_condition,added_by,approved_by,created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+        [gtId,quickCode,vendor,phone,item,qty,payout,selling,status,'{}',cond,gtCId,status!=='pending'?gtMId:null,daysAgo(rnd(3,15))],
       );
 
     // Repair tickets
@@ -236,8 +236,9 @@ export async function seedDemoData(pool: any): Promise<{ message: string }> {
 
     // Layaway plan
     const layR = await client.query(
-      `INSERT INTO sales (store_id,subtotal,total,user_id,payment_methods,status,sale_channel,customer_id,amount_due,payment_plan,locked_until_paid,due_date,note,timestamp) VALUES ($1,1299,1299,$2,$3,'PENDING','LAYAWAY',$4,999,$5,1,$6,'Layaway — $300 down, $999 balance over 3 months',$7) RETURNING id`,
+      `INSERT INTO sales (store_id,subtotal,total,user_id,payment_methods,status,sale_channel,customer_id,payment_plan,locked_until_paid,due_date,note,timestamp) VALUES ($1,1299,1299,$2,$3,'PENDING','LAYAWAY',$4,$5,1,$6,'Layaway — $300 down, $999 balance over 3 months',$7) RETURNING id`,
       [gtId,gtMId,JSON.stringify({cash:300,transfer:0,pos:0}),gtCustIds[2],JSON.stringify({type:'LAYAWAY',installment_count:3,payment_frequency:'MONTHLY',deposit_paid:300,balance_due:999,schedule:[]}),dateAgo(30),daysAgo(7)],
+      // note: amount_due omitted — has DB default (0)
     );
     await client.query(`INSERT INTO sale_items (sale_id,product_id,quantity,price_at_sale,base_price_at_sale,subtotal,condition) VALUES ($1,$2,1,1299,1299,1299,'NEW')`,[Number(layR.rows[0].id),gtPIds[3]]);
 
