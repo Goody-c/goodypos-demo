@@ -640,6 +640,15 @@ const POS: React.FC = () => {
     } as Product;
   };
 
+  const getConditionLabel = (rawCondition?: string | null) => {
+    const normalized = String(rawCondition || '').trim().toLowerCase();
+    if (!normalized) return null;
+    if (normalized.includes('new')) return 'NEW';
+    if (normalized.includes('open')) return 'OPEN BOX';
+    if (normalized.includes('used') || normalized.includes('pre') || normalized.includes('refurb')) return 'USED';
+    return String(rawCondition).trim().toUpperCase();
+  };
+
   const loadProducts = async (searchTerm = search.trim()) => {
     setProductsLoading(true);
     try {
@@ -1991,15 +2000,22 @@ const POS: React.FC = () => {
                           <Package size={44} />
                         </div>
                       )}
+                      <div className="absolute left-2 top-2 right-20 flex flex-wrap gap-1.5">
+                        {p.is_consignment && (
+                          <div className="rounded-lg border border-amber-300 bg-amber-100 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-amber-700">
+                            Consignment
+                          </div>
+                        )}
+                        {p.quick_code && (
+                          <div className="rounded-lg border border-sky-300 bg-sky-100 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-sky-700">
+                            QC {p.quick_code}
+                          </div>
+                        )}
+                      </div>
                       {/* Stock badge top-right */}
                       <div className={`absolute right-2 top-2 rounded-lg px-2 py-1 text-[9px] font-black uppercase tracking-widest backdrop-blur ${isLowStock ? 'bg-red-500 text-white' : totalStock === 0 ? 'bg-slate-700 text-white' : 'bg-white/90 border border-slate-200 text-slate-600'}`}>
                         {totalStock === 0 ? 'Out' : isLowStock ? `Low · ${totalStock}` : `Qty ${totalStock}`}
                       </div>
-                      {p.is_consignment && (
-                        <div className="absolute left-2 top-2 rounded-lg border border-amber-300 bg-amber-100 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-amber-400">
-                          Consignment
-                        </div>
-                      )}
                     </div>
 
                     <div className="p-3 flex-1 flex flex-col gap-3">
@@ -2007,21 +2023,6 @@ const POS: React.FC = () => {
                       <div className="rounded-xl bg-slate-900 px-3 py-2.5">
                         <h3 className="font-bold text-white leading-snug">{p.name}</h3>
                         <div className="mt-1.5 flex flex-wrap gap-1">
-                          {p.quick_code && (
-                            <span className="rounded-full border border-sky-400/40 bg-sky-500/10 px-2 py-0.5 text-[9px] font-black tracking-[0.24em] text-sky-200">
-                              QC {p.quick_code}
-                            </span>
-                          )}
-                          {p.is_consignment && p.internal_condition && (
-                            <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[9px] font-black tracking-widest text-white/80">
-                              {(() => {
-                                const ic = String(p.internal_condition).toLowerCase();
-                                if (ic.includes('new')) return 'NEW';
-                                if (ic.includes('open')) return 'OPEN BOX';
-                                return 'USED';
-                              })()}
-                            </span>
-                          )}
                           {Object.entries(p.specs || {})
                             .filter(([key, val]) => !String(key).startsWith('__') && ['string', 'number', 'boolean'].includes(typeof val))
                             .slice(0, 3)
@@ -2064,15 +2065,7 @@ const POS: React.FC = () => {
                           if (matrixButtons.length > 0) return matrixButtons;
 
                           const stock = Math.max(0, Number(p.is_consignment ? p.consignment_quantity : p.stock) || 0);
-                          const condLabel = p.is_consignment && p.internal_condition
-                            ? (() => {
-                                const ic = String(p.internal_condition).toLowerCase();
-                                if (ic.includes('new')) return 'NEW';
-                                if (ic.includes('open')) return 'OPEN BOX';
-                                if (ic.includes('used') || ic.includes('pre') || ic.includes('refurb')) return 'USED';
-                                return p.internal_condition.toUpperCase();
-                              })()
-                            : null;
+                          const condLabel = p.is_consignment ? getConditionLabel(p.internal_condition) : null;
                           return (
                             <button
                               type="button"
