@@ -513,7 +513,7 @@ const MarketCollections: React.FC = () => {
                           entry.is_overdue ? 'bg-red-400/30 text-red-200'
                           : isOpen ? 'bg-amber-400/20 text-amber-300'
                           : isSold ? 'bg-emerald-400/20 text-emerald-300'
-                          : 'bg-white/15 text-slate-300'
+                          : 'bg-white/20 text-white'
                         }`}>
                           {entry.is_overdue ? 'Overdue' : (entry.status_label || entry.status)}
                         </span>
