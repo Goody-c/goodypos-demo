@@ -262,14 +262,8 @@ const AuditVault: React.FC = () => {
     return query;
   };
 
-  const loadLogs = async (page: number) => {
-    try {
-      const logsData = await appFetch(`/api/system-logs?${buildLogQuery(page).toString()}`);
-      setLogs(Array.isArray(logsData?.logs) ? logsData.logs : []);
-      setLogTotal(Number(logsData?.total || 0));
-    } catch (err) {
-      console.error(err);
-    }
+  const loadLogs = async (_page: number) => {
+    // Demo mode: always keep demo logs
   };
 
   const handleDeleteSelectedLogs = async () => {
