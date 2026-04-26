@@ -23,8 +23,8 @@ const Proformas: React.FC = () => {
   const DEMO_PROFORMAS = [
     {
       id: 1001,
-      customer_name: 'Amara Osei',
-      customer_phone: '+233244000001',
+      customer_name: 'James Carter',
+      customer_phone: '+12025550101',
       created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       expiry_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
       total: 3850,
@@ -39,8 +39,8 @@ const Proformas: React.FC = () => {
     },
     {
       id: 1002,
-      customer_name: 'Kwame Mensah',
-      customer_phone: '+233244000002',
+      customer_name: 'Sophie Müller',
+      customer_phone: '+4915220000102',
       created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
       expiry_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
       total: 6200,
@@ -54,8 +54,8 @@ const Proformas: React.FC = () => {
     },
     {
       id: 1003,
-      customer_name: 'Efua Boateng',
-      customer_phone: '+233244000003',
+      customer_name: 'Emily Johnson',
+      customer_phone: '+13105550103',
       created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
       expiry_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
       total: 1450,
@@ -68,8 +68,8 @@ const Proformas: React.FC = () => {
     },
     {
       id: 1004,
-      customer_name: 'Yaw Darko',
-      customer_phone: '+233244000004',
+      customer_name: 'Lucas Dupont',
+      customer_phone: '+33612340004',
       created_at: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
       expiry_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
       total: 9500,
@@ -82,8 +82,8 @@ const Proformas: React.FC = () => {
     },
     {
       id: 1005,
-      customer_name: 'Adjoa Asante',
-      customer_phone: '+233244000005',
+      customer_name: 'Isabella Rossi',
+      customer_phone: '+39312340005',
       created_at: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
       expiry_date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
       total: 2200,
