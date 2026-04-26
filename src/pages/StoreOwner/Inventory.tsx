@@ -1493,8 +1493,9 @@ const Inventory: React.FC = () => {
     }
 
     if (availableUnits > 0) {
+      const conditionEntries = Object.values(product?.condition_matrix || {});
       const hasZeroPrice = store?.mode === 'GADGET'
-        ? Object.values(product?.condition_matrix || {}).every((entry: any) => Number(entry?.price || 0) <= 0)
+        ? conditionEntries.length > 0 && conditionEntries.every((entry: any) => Number(entry?.price || 0) <= 0)
         : Number(product?.price || 0) <= 0;
 
       if (hasZeroPrice) {
