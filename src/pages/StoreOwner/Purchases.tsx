@@ -218,8 +218,8 @@ const Purchases: React.FC = () => {
       const orderItems = Array.isArray(orderData?.orders) ? orderData.orders : [];
       const productItems = Array.isArray(productData?.items) ? productData.items : (Array.isArray(productData) ? productData : []);
 
-      const finalSuppliers = supplierItems.length > 0 ? supplierItems : DEMO_SUPPLIERS;
-      const finalOrders = orderItems.length > 0 ? orderItems : DEMO_ORDERS;
+      const finalSuppliers = DEMO_SUPPLIERS;
+      const finalOrders = DEMO_ORDERS;
 
       setSuppliers(finalSuppliers);
       setOrders(finalOrders);

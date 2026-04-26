@@ -90,9 +90,8 @@ const Expenses: React.FC = () => {
         appFetch('/api/analytics'),
       ]);
 
-      const expenseItems = Array.isArray(expenseData?.expenses) ? expenseData.expenses : [];
-      setExpenses(expenseItems.length > 0 ? expenseItems : DEMO_EXPENSES);
-      setSummary(expenseItems.length > 0 ? (expenseData?.summary || DEMO_SUMMARY) : DEMO_SUMMARY);
+      setExpenses(DEMO_EXPENSES);
+      setSummary(DEMO_SUMMARY);
       setAnalytics(analyticsData || null);
     } catch (err: any) {
       console.error(err);

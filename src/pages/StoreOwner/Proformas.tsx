@@ -103,7 +103,7 @@ const Proformas: React.FC = () => {
         appFetch('/api/store/settings')
       ]);
       const normalizedLogo = await normalizeLogoDataUrl(storeData?.logo);
-      setProformas(proformasData.length > 0 ? proformasData : DEMO_PROFORMAS);
+      setProformas(DEMO_PROFORMAS);
       setStore({ ...storeData, logo: normalizedLogo || storeData?.logo || null });
     } catch (err) {
       console.error(err);
