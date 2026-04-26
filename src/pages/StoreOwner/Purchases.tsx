@@ -110,6 +110,98 @@ const Purchases: React.FC = () => {
     return () => window.removeEventListener('click', close);
   }, [lineDropdownOpen]);
 
+  const DEMO_SUPPLIERS = [
+    { id: 9001, name: 'D&H Distributing', phone: '(800) 555-0300', email: 'orders@dandh.com', address: '2525 N 7th St, Harrisburg, PA', note: 'Net 30 payment terms. Free shipping over $500.' },
+    { id: 9002, name: 'Ingram Micro', phone: '(800) 555-0400', email: 'sales@ingrammicro.com', address: '3351 Michelson Dr, Irvine, CA', note: 'Preferred Apple & Samsung distributor.' },
+    { id: 9003, name: 'Tech Data Europe', phone: '+44 20 7946 0100', email: 'supply@techdata.eu', address: '16 Great Portland St, London, UK', note: 'European accessories and peripherals.' },
+    { id: 9004, name: 'Arrow Electronics', phone: '(800) 555-0500', email: 'orders@arrow.com', address: '9201 E Dry Creek Rd, Centennial, CO', note: 'Components and enterprise hardware.' },
+  ];
+
+  const DEMO_ORDERS = [
+    {
+      id: 8001,
+      order_number: 'TH-PO-1777119451990',
+      supplier_id: 9001,
+      supplier_name: 'D&H Distributing',
+      status: 'ORDERED',
+      created_at: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+      expected_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      note: 'Q2 restocking order',
+      subtotal: 6230,
+      total_quantity: 15,
+      items: [
+        { product_name: 'iPhone 15 Pro Max 256GB', condition: 'NEW', quantity: 5, unit_cost: 850, line_total: 4250 },
+        { product_name: 'AirPods Pro 2nd Gen', condition: 'NEW', quantity: 10, unit_cost: 198, line_total: 1980 },
+      ],
+    },
+    {
+      id: 8002,
+      order_number: 'TH-PO-1777119450991',
+      supplier_id: 9002,
+      supplier_name: 'Ingram Micro',
+      status: 'RECEIVED',
+      created_at: new Date(Date.now() - 13 * 24 * 60 * 60 * 1000).toISOString(),
+      expected_date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+      received_at: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(),
+      note: 'Accessories restock',
+      subtotal: 410,
+      total_quantity: 80,
+      items: [
+        { product_name: 'USB-C Cable 6ft 3-Pack', condition: '', quantity: 30, unit_cost: 8, line_total: 240 },
+        { product_name: 'Tempered Glass Screen Guard', condition: '', quantity: 50, unit_cost: 3.4, line_total: 170 },
+      ],
+    },
+    {
+      id: 8003,
+      order_number: 'TH-PO-1777119449800',
+      supplier_id: 9003,
+      supplier_name: 'Tech Data Europe',
+      status: 'ORDERED',
+      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      expected_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      note: 'Samsung Galaxy Tab S9 bulk order',
+      subtotal: 11200,
+      total_quantity: 16,
+      items: [
+        { product_name: 'Samsung Galaxy Tab S9', condition: 'NEW', quantity: 10, unit_cost: 720, line_total: 7200 },
+        { product_name: 'Galaxy Tab Keyboard Cover', condition: 'NEW', quantity: 6, unit_cost: 200, line_total: 1200 },
+        { product_name: 'USB-C Hub 7-in-1', condition: '', quantity: 20, unit_cost: 140, line_total: 2800 },
+      ],
+    },
+    {
+      id: 8004,
+      order_number: 'TH-PO-1777119448500',
+      supplier_id: 9004,
+      supplier_name: 'Arrow Electronics',
+      status: 'RECEIVED',
+      created_at: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
+      expected_date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+      received_at: new Date(Date.now() - 16 * 24 * 60 * 60 * 1000).toISOString(),
+      note: 'MacBook Pro restock — back to school season',
+      subtotal: 18500,
+      total_quantity: 5,
+      items: [
+        { product_name: 'MacBook Pro 14" M3', condition: 'NEW', quantity: 3, unit_cost: 4200, line_total: 12600 },
+        { product_name: 'MacBook Air M2', condition: 'NEW', quantity: 2, unit_cost: 2950, line_total: 5900 },
+      ],
+    },
+    {
+      id: 8005,
+      order_number: 'TH-PO-1777119447200',
+      supplier_id: 9001,
+      supplier_name: 'D&H Distributing',
+      status: 'CANCELLED',
+      created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      expected_date: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
+      note: 'Cancelled — switched to Ingram Micro for better pricing',
+      subtotal: 3200,
+      total_quantity: 8,
+      items: [
+        { product_name: 'Sony WH-1000XM5 Headphones', condition: 'NEW', quantity: 8, unit_cost: 400, line_total: 3200 },
+      ],
+    },
+  ];
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -126,18 +218,28 @@ const Purchases: React.FC = () => {
       const orderItems = Array.isArray(orderData?.orders) ? orderData.orders : [];
       const productItems = Array.isArray(productData?.items) ? productData.items : (Array.isArray(productData) ? productData : []);
 
-      setSuppliers(supplierItems);
-      setOrders(orderItems);
+      const finalSuppliers = supplierItems.length > 0 ? supplierItems : DEMO_SUPPLIERS;
+      const finalOrders = orderItems.length > 0 ? orderItems : DEMO_ORDERS;
+
+      setSuppliers(finalSuppliers);
+      setOrders(finalOrders);
       setProducts(productItems);
       setBatches(Array.isArray(batchData?.batches) ? batchData.batches : []);
       setBatchSummary(batchData?.summary || { total: 0, expiringSoon: 0, expired: 0, openQuantity: 0 });
       setSummary(orderData?.summary || {
-        openOrders: orderItems.filter((o: any) => o.status === 'ORDERED').length,
-        receivedOrders: orderItems.filter((o: any) => o.status === 'RECEIVED').length,
-        pendingUnits: orderItems.filter((o: any) => o.status === 'ORDERED').reduce((s: number, o: any) => s + (Number(o.total_quantity || 0) || 0), 0),
-        pendingValue: orderItems.filter((o: any) => o.status === 'ORDERED').reduce((s: number, o: any) => s + (Number(o.subtotal || 0) || 0), 0),
+        openOrders: finalOrders.filter((o: any) => o.status === 'ORDERED').length,
+        receivedOrders: finalOrders.filter((o: any) => o.status === 'RECEIVED').length,
+        pendingUnits: finalOrders.filter((o: any) => o.status === 'ORDERED').reduce((s: number, o: any) => s + (Number(o.total_quantity || 0) || 0), 0),
+        pendingValue: finalOrders.filter((o: any) => o.status === 'ORDERED').reduce((s: number, o: any) => s + (Number(o.subtotal || 0) || 0), 0),
       });
     } catch (err: any) {
+      setSuppliers(DEMO_SUPPLIERS);
+      setOrders(DEMO_ORDERS);
+      setSummary({
+        openOrders: DEMO_ORDERS.filter((o) => o.status === 'ORDERED').length,
+        pendingUnits: DEMO_ORDERS.filter((o) => o.status === 'ORDERED').reduce((s, o) => s + o.total_quantity, 0),
+        pendingValue: DEMO_ORDERS.filter((o) => o.status === 'ORDERED').reduce((s, o) => s + o.subtotal, 0),
+      });
       showNotification({ message: String(err?.message || err || 'Failed to load data'), type: 'error' });
     } finally {
       setLoading(false);
