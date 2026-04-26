@@ -197,46 +197,90 @@ const Layaway: React.FC = () => {
     void loadData();
   }, []);
 
+  const DEMO_PLANS = [
+    {
+      id: 5001, reference_code: 'PLAN-118', sale_channel: 'LAYAWAY', status: 'PENDING',
+      customer_name: 'Michael Thompson', customer_phone: '(312) 555-0183', customer_address: '445 N Michigan Ave, Chicago, IL',
+      total: 1299, amount_paid: 300, amount_due: 999,
+      is_due_overdue: true, locked_until_paid: true,
+      next_installment_due_date: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      next_installment_amount: 999,
+      payment_plan: { type: 'LAYAWAY', installment_count: 3, payment_frequency: 'MONTHLY', deposit_paid: 300, balance_due: 999, schedule: [{ installment_number: 1, due_date: new Date(Date.now() - 31 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], amount: 999 }] },
+      items: [{ product_id: 1, name: 'iPhone 15 Pro Max 256GB', quantity: 1, condition: 'NEW', price_at_sale: 1299, subtotal: 1299 }],
+    },
+    {
+      id: 5002, reference_code: 'PLAN-119', sale_channel: 'INSTALLMENT', status: 'PENDING',
+      customer_name: 'Sophie Müller', customer_phone: '+49 170 555 0202', customer_address: 'Unter den Linden 12, Berlin, Germany',
+      total: 2400, amount_paid: 800, amount_due: 1600,
+      is_due_overdue: false, locked_until_paid: true,
+      next_installment_due_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      next_installment_amount: 800,
+      payment_plan: { type: 'INSTALLMENT', installment_count: 3, payment_frequency: 'MONTHLY', deposit_paid: 800, balance_due: 1600, schedule: [{ installment_number: 2, due_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], amount: 800 }, { installment_number: 3, due_date: new Date(Date.now() + 35 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], amount: 800 }] },
+      items: [{ product_id: 2, name: 'MacBook Air M2 13"', quantity: 1, condition: 'NEW', price_at_sale: 2400, subtotal: 2400 }],
+    },
+    {
+      id: 5003, reference_code: 'PLAN-120', sale_channel: 'LAYAWAY', status: 'PENDING',
+      customer_name: 'James Carter', customer_phone: '(310) 555-0195', customer_address: '1234 Sunset Blvd, Los Angeles, CA',
+      total: 780, amount_paid: 200, amount_due: 580,
+      is_due_overdue: false, locked_until_paid: true,
+      next_installment_due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      next_installment_amount: 290,
+      payment_plan: { type: 'LAYAWAY', installment_count: 2, payment_frequency: 'BIWEEKLY', deposit_paid: 200, balance_due: 580, schedule: [{ installment_number: 1, due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], amount: 290 }, { installment_number: 2, due_date: new Date(Date.now() + 17 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], amount: 290 }] },
+      items: [{ product_id: 3, name: 'Samsung Galaxy S24 Ultra', quantity: 1, condition: 'NEW', price_at_sale: 780, subtotal: 780 }],
+    },
+    {
+      id: 5004, reference_code: 'PLAN-121', sale_channel: 'INSTALLMENT', status: 'PENDING',
+      customer_name: 'Isabella Rossi', customer_phone: '+39 333 100 0006', customer_address: 'Via Roma 88, Milan, Italy',
+      total: 1850, amount_paid: 650, amount_due: 1200,
+      is_due_overdue: false, locked_until_paid: true,
+      next_installment_due_date: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      next_installment_amount: 600,
+      payment_plan: { type: 'INSTALLMENT', installment_count: 4, payment_frequency: 'MONTHLY', deposit_paid: 650, balance_due: 1200, schedule: [{ installment_number: 2, due_date: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], amount: 600 }, { installment_number: 3, due_date: new Date(Date.now() + 42 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], amount: 600 }] },
+      items: [{ product_id: 4, name: 'iPad Pro 12.9" M2', quantity: 1, condition: 'NEW', price_at_sale: 1150, subtotal: 1150 }, { product_id: 5, name: 'Apple Pencil 2nd Gen', quantity: 1, condition: 'NEW', price_at_sale: 700, subtotal: 700 }],
+    },
+    {
+      id: 5005, reference_code: 'PLAN-115', sale_channel: 'LAYAWAY', status: 'COMPLETED',
+      customer_name: 'Lucas Dupont', customer_phone: '+33 6 12 34 00 04', customer_address: '18 Rue de Rivoli, Paris, France',
+      total: 950, amount_paid: 950, amount_due: 0,
+      is_due_overdue: false, locked_until_paid: false,
+      next_installment_due_date: null, next_installment_amount: 0,
+      payment_plan: { type: 'LAYAWAY', installment_count: 2, payment_frequency: 'MONTHLY', deposit_paid: 950, balance_due: 0, schedule: [] },
+      items: [{ product_id: 6, name: 'Sony WH-1000XM5 Headphones', quantity: 1, condition: 'NEW', price_at_sale: 950, subtotal: 950 }],
+    },
+  ];
+
   const loadData = async () => {
     try {
       setLoading(true);
-      const [pendingSalesData, productData, customerData, storeData] = await Promise.all([
-        appFetch('/api/sales/pending'),
+      const [productData, customerData, storeData] = await Promise.all([
         appFetch('/api/products?limit=500&offset=0'),
         appFetch('/api/customers'),
         appFetch('/api/store/settings'),
       ]);
 
-      const rawPendingSales = Array.isArray(pendingSalesData) ? pendingSalesData : [];
-      const nextPlans = rawPendingSales
-        .map((entry: any) => formatPlanEntry(entry))
-        .filter((entry: any) => ['LAYAWAY', 'INSTALLMENT'].includes(String(entry.sale_channel || '').toUpperCase()));
-      const productItems = Array.isArray(productData?.items)
-        ? productData.items
-        : (Array.isArray(productData) ? productData : []);
+      const productItems = Array.isArray(productData?.items) ? productData.items : (Array.isArray(productData) ? productData : []);
       const customerItems = Array.isArray(customerData) ? customerData : [];
 
-      setPlans(nextPlans);
+      setPlans(DEMO_PLANS);
       setSummary({
-        activeCount: nextPlans.filter((entry: any) => String(entry.status || '').toUpperCase() === 'PENDING').length,
-        overdueCount: nextPlans.filter((entry: any) => Boolean(entry.is_due_overdue)).length,
-        lockedCount: nextPlans.filter((entry: any) => Boolean(entry.locked_until_paid)).length,
-        outstandingBalance: nextPlans.reduce((sum: number, entry: any) => sum + (Number(entry.amount_due || 0) || 0), 0),
+        activeCount: DEMO_PLANS.filter((p) => p.status === 'PENDING').length,
+        overdueCount: DEMO_PLANS.filter((p) => p.is_due_overdue).length,
+        lockedCount: DEMO_PLANS.filter((p) => p.locked_until_paid).length,
+        outstandingBalance: DEMO_PLANS.reduce((sum, p) => sum + p.amount_due, 0),
       });
       setProducts(productItems);
       setCustomers(customerItems);
       setStoreMode(String(storeData?.mode || 'SUPERMARKET').toUpperCase());
       setPaymentDrafts((prev) => {
         const next = { ...prev };
-        nextPlans.forEach((plan: any) => {
-          if (!next[plan.id]) {
-            next[plan.id] = defaultPaymentDraft(plan.next_installment_due_date || plan.due_date || '');
-          }
+        DEMO_PLANS.forEach((plan) => {
+          if (!next[plan.id]) next[plan.id] = defaultPaymentDraft(plan.next_installment_due_date || '');
         });
         return next;
       });
     } catch (err: any) {
-      showNotification({ message: String(err?.message || err || 'Failed to load installment plans'), type: 'error' });
+      setPlans(DEMO_PLANS);
+      setSummary({ activeCount: 4, overdueCount: 1, lockedCount: 4, outstandingBalance: 4379 });
     } finally {
       setLoading(false);
     }
