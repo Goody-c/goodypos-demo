@@ -20,6 +20,82 @@ const Proformas: React.FC = () => {
     loadData();
   }, []);
 
+  const DEMO_PROFORMAS = [
+    {
+      id: 1001,
+      customer_name: 'Amara Osei',
+      customer_phone: '+233244000001',
+      created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      expiry_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+      total: 3850,
+      subtotal: 3700,
+      tax_amount: 150,
+      status: 'PENDING',
+      items: [
+        { name: 'Samsung Galaxy A54', quantity: 1, price_at_sale: 2500, subtotal: 2500, condition: 'brand_new' },
+        { name: 'Phone Case & Screen Protector', quantity: 1, price_at_sale: 350, subtotal: 350 },
+        { name: 'Wireless Earbuds', quantity: 1, price_at_sale: 1000, subtotal: 1000 },
+      ],
+    },
+    {
+      id: 1002,
+      customer_name: 'Kwame Mensah',
+      customer_phone: '+233244000002',
+      created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      expiry_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+      total: 6200,
+      subtotal: 6000,
+      tax_amount: 200,
+      status: 'PENDING',
+      items: [
+        { name: 'iPhone 14', quantity: 1, price_at_sale: 5500, subtotal: 5500, condition: 'brand_new', imei_serial: '352000112233445' },
+        { name: 'MagSafe Charger', quantity: 1, price_at_sale: 500, subtotal: 500 },
+      ],
+    },
+    {
+      id: 1003,
+      customer_name: 'Efua Boateng',
+      customer_phone: '+233244000003',
+      created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+      expiry_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+      total: 1450,
+      subtotal: 1400,
+      tax_amount: 50,
+      status: 'PENDING',
+      items: [
+        { name: 'Bluetooth Speaker', quantity: 2, price_at_sale: 700, subtotal: 1400 },
+      ],
+    },
+    {
+      id: 1004,
+      customer_name: 'Yaw Darko',
+      customer_phone: '+233244000004',
+      created_at: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+      expiry_date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      total: 9500,
+      subtotal: 9200,
+      tax_amount: 300,
+      status: 'CONVERTED',
+      items: [
+        { name: 'MacBook Air M2', quantity: 1, price_at_sale: 9200, subtotal: 9200, condition: 'brand_new' },
+      ],
+    },
+    {
+      id: 1005,
+      customer_name: 'Adjoa Asante',
+      customer_phone: '+233244000005',
+      created_at: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+      expiry_date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+      total: 2200,
+      subtotal: 2100,
+      tax_amount: 100,
+      status: 'CANCELLED',
+      items: [
+        { name: 'Smart Watch', quantity: 1, price_at_sale: 2100, subtotal: 2100, condition: 'brand_new' },
+      ],
+    },
+  ];
+
   const loadData = async () => {
     try {
       const [proformasData, storeData] = await Promise.all([
@@ -27,10 +103,11 @@ const Proformas: React.FC = () => {
         appFetch('/api/store/settings')
       ]);
       const normalizedLogo = await normalizeLogoDataUrl(storeData?.logo);
-      setProformas(proformasData);
+      setProformas(proformasData.length > 0 ? proformasData : DEMO_PROFORMAS);
       setStore({ ...storeData, logo: normalizedLogo || storeData?.logo || null });
     } catch (err) {
       console.error(err);
+      setProformas(DEMO_PROFORMAS);
     } finally {
       setLoading(false);
     }
