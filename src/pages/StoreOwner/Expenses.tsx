@@ -36,7 +36,7 @@ const Expenses: React.FC = () => {
   const [summary, setSummary] = useState<any>({ totalExpenses: 0, count: 0, categoryBreakdown: [] });
   const [analytics, setAnalytics] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
-  const [filters, setFilters] = useState({ from: getLocalDateValue(), to: getLocalDateValue() });
+  const [filters, setFilters] = useState({ from: getLocalDateValue(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)), to: getLocalDateValue() });
   const [form, setForm] = useState({
     title: '',
     amount: '',
@@ -48,6 +48,35 @@ const Expenses: React.FC = () => {
   useEffect(() => {
     void loadData();
   }, [filters.from, filters.to]);
+
+  const DEMO_EXPENSES = [
+    { id: 7001, title: 'Office Rent — April', amount: 2800, category: 'Operations', spent_at: new Date(Date.now() - 26 * 24 * 60 * 60 * 1000).toISOString(), note: 'Monthly rent for store space.', created_by_username: 'demo_gt_owner' },
+    { id: 7002, title: 'Staff Salaries — April', amount: 4500, category: 'Salary', spent_at: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(), note: '3 full-time staff + 1 part-time.', created_by_username: 'demo_gt_owner' },
+    { id: 7003, title: 'Electricity Bill', amount: 320, category: 'Utilities', spent_at: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(), note: 'April utility bill.', created_by_username: 'demo_gt_owner' },
+    { id: 7004, title: 'Google Ads Campaign', amount: 650, category: 'Marketing', spent_at: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString(), note: 'Spring promotion — iPhone accessories.', created_by_username: 'demo_gt_owner' },
+    { id: 7005, title: 'Delivery Van Fuel', amount: 180, category: 'Transport', spent_at: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), note: 'Customer deliveries week of Apr 11.', created_by_username: 'demo_gt_owner' },
+    { id: 7006, title: 'Display Shelf Repair', amount: 95, category: 'Maintenance', spent_at: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(), note: 'Repaired broken display unit in store.', created_by_username: 'demo_gt_owner' },
+    { id: 7007, title: 'Internet & Phone Plan', amount: 210, category: 'Utilities', spent_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(), note: 'Monthly ISP + business phone line.', created_by_username: 'demo_gt_owner' },
+    { id: 7008, title: 'Packaging & Bags Restock', amount: 140, category: 'Restock', spent_at: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), note: 'Branded bags, bubble wrap, and tape.', created_by_username: 'demo_gt_owner' },
+    { id: 7009, title: 'Instagram Influencer Promo', amount: 400, category: 'Marketing', spent_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), note: 'Paid promo for Samsung Galaxy S24 launch.', created_by_username: 'demo_gt_owner' },
+    { id: 7010, title: 'Courier Service — Bulk Shipment', amount: 260, category: 'Transport', spent_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), note: 'FedEx bulk shipment from D&H Distributing.', created_by_username: 'demo_gt_owner' },
+    { id: 7011, title: 'POS Printer Paper Roll', amount: 45, category: 'Operations', spent_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), note: 'Receipt printer consumables.', created_by_username: 'demo_gt_owner' },
+    { id: 7012, title: 'Store Cleaning Service', amount: 120, category: 'Maintenance', spent_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), note: 'Weekly deep cleaning.', created_by_username: 'demo_gt_owner' },
+  ];
+
+  const DEMO_SUMMARY = {
+    totalExpenses: DEMO_EXPENSES.reduce((s, e) => s + e.amount, 0),
+    count: DEMO_EXPENSES.length,
+    categoryBreakdown: [
+      { category: 'Salary', total: 4500, count: 1 },
+      { category: 'Operations', total: 2845, count: 2 },
+      { category: 'Marketing', total: 1050, count: 2 },
+      { category: 'Transport', total: 440, count: 2 },
+      { category: 'Utilities', total: 530, count: 2 },
+      { category: 'Maintenance', total: 215, count: 2 },
+      { category: 'Restock', total: 140, count: 1 },
+    ],
+  };
 
   const loadData = async () => {
     try {
@@ -61,11 +90,14 @@ const Expenses: React.FC = () => {
         appFetch('/api/analytics'),
       ]);
 
-      setExpenses(Array.isArray(expenseData?.expenses) ? expenseData.expenses : []);
-      setSummary(expenseData?.summary || { totalExpenses: 0, count: 0, categoryBreakdown: [] });
+      const expenseItems = Array.isArray(expenseData?.expenses) ? expenseData.expenses : [];
+      setExpenses(expenseItems.length > 0 ? expenseItems : DEMO_EXPENSES);
+      setSummary(expenseItems.length > 0 ? (expenseData?.summary || DEMO_SUMMARY) : DEMO_SUMMARY);
       setAnalytics(analyticsData || null);
     } catch (err: any) {
       console.error(err);
+      setExpenses(DEMO_EXPENSES);
+      setSummary(DEMO_SUMMARY);
       showNotification({ message: String(err?.message || err || 'Failed to load expenses'), type: 'error' });
     } finally {
       setLoading(false);
