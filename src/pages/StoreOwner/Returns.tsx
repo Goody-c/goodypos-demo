@@ -16,6 +16,63 @@ const Returns: React.FC = () => {
 
   useEffect(() => { setPage(1); }, [deferredSearch, typeFilter]);
 
+  const DEMO_RETURNS = [
+    {
+      id: 1, return_number: 'Return #1', sale_id: 3, customer_name: 'Walk-in Customer', customer_phone: null,
+      type: 'REFUND', restock_status: 'RESTOCKED', processed_by: 'demo_gt_manager',
+      created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+      reason: 'Customer changed mind — purchased wrong model',
+      refund_amount: 249, returned_value: 249, item_count: 1,
+      refund_method: 'cash',
+      items: [{ name: 'AirPods Pro (2nd Gen)', quantity: 1, unit_price: 249 }],
+    },
+    {
+      id: 2, return_number: 'Return #2', sale_id: 7, customer_name: 'Emily Johnson', customer_phone: '(310) 555-0103',
+      type: 'EXCHANGE', restock_status: 'RESTOCKED', processed_by: 'demo_gt_manager',
+      created_at: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+      reason: 'Received wrong color — wanted Midnight Black, got Starlight White.',
+      refund_amount: 0, returned_value: 1099, item_count: 1,
+      refund_method: null,
+      items: [{ name: 'iPhone 14 128GB (Starlight)', quantity: 1, unit_price: 1099 }],
+    },
+    {
+      id: 3, return_number: 'Return #3', sale_id: 12, customer_name: 'James Carter', customer_phone: '(202) 555-0101',
+      type: 'REFUND', restock_status: 'RESTOCKED', processed_by: 'demo_gt_owner',
+      created_at: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(),
+      reason: 'Device had pre-existing screen scratch not noticed at time of sale.',
+      refund_amount: 850, returned_value: 850, item_count: 1,
+      refund_method: 'transfer',
+      items: [{ name: 'Samsung Galaxy S23', quantity: 1, unit_price: 850 }],
+    },
+    {
+      id: 4, return_number: 'Return #4', sale_id: 15, customer_name: 'Sophie Müller', customer_phone: '+49 170 555 0202',
+      type: 'RETURN_ONLY', restock_status: 'RESTOCKED', processed_by: 'demo_gt_manager',
+      created_at: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+      reason: 'Item returned under warranty — sent for repair assessment.',
+      refund_amount: 0, returned_value: 320, item_count: 1,
+      refund_method: null,
+      items: [{ name: 'Bose QuietComfort 45', quantity: 1, unit_price: 320 }],
+    },
+    {
+      id: 5, return_number: 'Return #5', sale_id: 19, customer_name: 'Lucas Dupont', customer_phone: '+33 6 12 34 00 04',
+      type: 'REFUND', restock_status: 'RESTOCKED', processed_by: 'demo_gt_owner',
+      created_at: new Date(Date.now() - 18 * 24 * 60 * 60 * 1000).toISOString(),
+      reason: 'Customer bought duplicate item by mistake.',
+      refund_amount: 140, returned_value: 140, item_count: 2,
+      refund_method: 'cash',
+      items: [{ name: 'USB-C Cable 6ft 3-Pack', quantity: 2, unit_price: 70 }],
+    },
+    {
+      id: 6, return_number: 'Return #6', sale_id: 22, customer_name: 'Oliver Bennett', customer_phone: '+44 7700 900183',
+      type: 'EXCHANGE', restock_status: 'RESTOCKED', processed_by: 'demo_gt_manager',
+      created_at: new Date(Date.now() - 22 * 24 * 60 * 60 * 1000).toISOString(),
+      reason: 'Faulty charging port — exchanged for new unit.',
+      refund_amount: 0, returned_value: 780, item_count: 1,
+      refund_method: null,
+      items: [{ name: 'Google Pixel 7 Pro', quantity: 1, unit_price: 780 }],
+    },
+  ];
+
   useEffect(() => {
     const loadReturns = async () => {
       try {
@@ -25,10 +82,11 @@ const Returns: React.FC = () => {
         if (typeFilter !== 'ALL') query.set('type', typeFilter);
 
         const data = await appFetch(`/api/returns${query.toString() ? `?${query.toString()}` : ''}`);
-        setReturnsData(normalizeReturnsResponse(data));
+        const normalized = normalizeReturnsResponse(data);
+        setReturnsData(normalized.length > 0 ? normalized : DEMO_RETURNS);
       } catch (err) {
         console.error(err);
-        setReturnsData([]);
+        setReturnsData(DEMO_RETURNS);
       } finally {
         setLoading(false);
       }
