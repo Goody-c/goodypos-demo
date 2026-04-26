@@ -548,7 +548,7 @@ const MarketCollections: React.FC = () => {
                           <p className="text-sm font-bold text-slate-900">{item.name}</p>
                           <p className="text-[11px] text-slate-500">{item.quantity} unit(s){item.condition ? ` · ${formatConditionLabel(item.condition)}` : ''}</p>
                         </div>
-                        <span className="text-sm font-black text-slate-900">{formatCurrency(Number(item.subtotal) || 0)}</span>
+                        <span className="text-sm font-black text-slate-900">{formatCurrency(Number(item.subtotal) || Number(item.price_at_collection) * Number(item.quantity || 1) || Number(item.total) || 0)}</span>
                       </div>
                     ))}
                   </div>
