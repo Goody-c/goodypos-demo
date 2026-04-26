@@ -82,8 +82,7 @@ const Returns: React.FC = () => {
         if (typeFilter !== 'ALL') query.set('type', typeFilter);
 
         const data = await appFetch(`/api/returns${query.toString() ? `?${query.toString()}` : ''}`);
-        const normalized = normalizeReturnsResponse(data);
-        setReturnsData(normalized.length > 0 ? normalized : DEMO_RETURNS);
+        setReturnsData(DEMO_RETURNS);
       } catch (err) {
         console.error(err);
         setReturnsData(DEMO_RETURNS);
