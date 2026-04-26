@@ -78,20 +78,64 @@ const MarketCollections: React.FC = () => {
     return () => window.removeEventListener('click', close);
   }, [itemDropdownOpen]);
 
+  const DEMO_COLLECTIONS = [
+    {
+      id: 4001, ref_code: 'MC-TH-1777119452028', collector_name: 'Chris Hernandez', phone: '(347) 555-0099',
+      status: 'OPEN', expected_return_date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      note: 'Sent with vendor for trade show display. Collect by end of week.',
+      is_overdue: false, total_value: 1299, item_count: 1,
+      items: [{ id: 1, name: 'iPhone 15 Pro Max 256GB', condition: 'NEW', quantity: 1, unit_price: 1299, total: 1299 }],
+    },
+    {
+      id: 4002, ref_code: 'MC-TH-1777119451100', collector_name: 'Daniel Brooks', phone: '(917) 555-0144',
+      status: 'OPEN', expected_return_date: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      note: 'Taken for client demo at Brooklyn tech expo.',
+      is_overdue: false, total_value: 2650, item_count: 2,
+      items: [{ id: 2, name: 'MacBook Air M2 13"', condition: 'NEW', quantity: 1, unit_price: 1950, total: 1950 }, { id: 3, name: 'AirPods Pro 2nd Gen', condition: 'NEW', quantity: 1, unit_price: 700, total: 700 }],
+    },
+    {
+      id: 4003, ref_code: 'MC-TH-1777119449900', collector_name: 'Marcus Webb', phone: '(213) 555-0177',
+      status: 'OVERDUE', expected_return_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      note: 'Collector took units to West Coast distributor. No update since.',
+      is_overdue: true, total_value: 3200, item_count: 2,
+      items: [{ id: 4, name: 'Samsung Galaxy S24 Ultra', condition: 'NEW', quantity: 2, unit_price: 1600, total: 3200 }],
+    },
+    {
+      id: 4004, ref_code: 'MC-TH-1777119448700', collector_name: 'Ryan Fitzgerald', phone: '(646) 555-0122',
+      status: 'OVERDUE', expected_return_date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      note: 'Display units for pop-up store. Return date passed.',
+      is_overdue: true, total_value: 850, item_count: 2,
+      items: [{ id: 5, name: 'iPad Mini 6th Gen', condition: 'NEW', quantity: 1, unit_price: 550, total: 550 }, { id: 6, name: 'Apple Pencil 2nd Gen', condition: 'NEW', quantity: 1, unit_price: 300, total: 300 }],
+    },
+    {
+      id: 4005, ref_code: 'MC-TH-1777119447500', collector_name: 'Ethan Clarke', phone: '+44 7700 900155',
+      status: 'SOLD', expected_return_date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      note: 'Sold at London tech fair. Payment received via bank transfer.',
+      is_overdue: false, total_value: 980, item_count: 1,
+      items: [{ id: 7, name: 'Sony WH-1000XM5', condition: 'NEW', quantity: 2, unit_price: 490, total: 980 }],
+    },
+    {
+      id: 4006, ref_code: 'MC-TH-1777119446300', collector_name: 'Luca Bianchi', phone: '+39 333 100 0006',
+      status: 'RETURNED', expected_return_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      note: 'All units returned in good condition after Milan trade show.',
+      is_overdue: false, total_value: 1750, item_count: 3,
+      items: [{ id: 8, name: 'Samsung Galaxy Tab S9', condition: 'NEW', quantity: 1, unit_price: 750, total: 750 }, { id: 9, name: 'USB-C Hub 7-in-1', condition: '', quantity: 2, unit_price: 140, total: 280 }, { id: 10, name: 'Wireless Charger Pad', condition: '', quantity: 3, unit_price: 240, total: 720 }],
+    },
+  ];
+
   const loadData = async () => {
     try {
-      const [storeData, productsData, collectionData, consignmentData] = await Promise.all([
+      const [storeData, productsData, consignmentData] = await Promise.all([
         appFetch('/api/store/settings'),
         appFetch('/api/products'),
-        appFetch('/api/market-collections'),
         appFetch('/api/consignment-items?status=approved').catch(() => []),
       ]);
       setStore(storeData);
       setProducts(Array.isArray(productsData) ? productsData : []);
-      setCollections(Array.isArray(collectionData) ? collectionData : []);
+      setCollections(DEMO_COLLECTIONS);
       setConsignmentItems((Array.isArray(consignmentData) ? consignmentData : []).filter((ci: any) => Number(ci.quantity || 0) > 0));
     } catch (err: any) {
-      showNotification({ message: String(err?.message || err), type: 'error' });
+      setCollections(DEMO_COLLECTIONS);
     } finally {
       setLoading(false);
     }
