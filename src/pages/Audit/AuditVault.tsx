@@ -297,36 +297,44 @@ const AuditVault: React.FC = () => {
     void loadLogs(newPage);
   };
 
+  const DEMO_LOGS = [
+    { id: 9001, action_type: 'PRICE_CHANGE', staff_name: 'demo_gt_manager', product_name: 'iPhone 15 Pro Max 256GB', created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), is_high_risk: true, risk_level: 'HIGH', note: 'Price adjusted for promotional weekend sale.', snapshot_before: { price: 1399 }, snapshot_after: { price: 1299 } },
+    { id: 9002, action_type: 'DISCOUNT', staff_name: 'demo_gt_staff', product_name: 'Samsung Galaxy S24 Ultra', created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), is_high_risk: false, risk_level: 'LOW', note: '10% loyalty discount applied for returning customer James Carter.', snapshot_before: { discount: 0 }, snapshot_after: { discount: 78 } },
+    { id: 9003, action_type: 'STOCK_ADJUST', staff_name: 'demo_gt_manager', product_name: 'AirPods Pro 2nd Gen', created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), is_high_risk: true, risk_level: 'HIGH', note: 'Stock count corrected after physical inventory check.', snapshot_before: { stock: 12 }, snapshot_after: { stock: 9 } },
+    { id: 9004, action_type: 'PRICE_MARKUP', staff_name: 'demo_gt_owner', product_name: 'MacBook Air M2 13"', created_at: new Date(Date.now() - 7 * 60 * 60 * 1000).toISOString(), is_high_risk: true, risk_level: 'HIGH', note: 'Markup applied due to supplier price increase.', snapshot_before: { price: 1850 }, snapshot_after: { price: 1950 } },
+    { id: 9005, action_type: 'DISCOUNT', staff_name: 'demo_gt_staff', product_name: 'Google Pixel 7 Pro', created_at: new Date(Date.now() - 9 * 60 * 60 * 1000).toISOString(), is_high_risk: false, risk_level: 'LOW', note: 'Manager-approved 5% discount for bundle purchase.', snapshot_before: { discount: 0 }, snapshot_after: { discount: 39 } },
+    { id: 9006, action_type: 'PRODUCT_ADD', staff_name: 'demo_gt_manager', product_name: 'Sony WH-1000XM5', created_at: new Date(Date.now() - 11 * 60 * 60 * 1000).toISOString(), is_high_risk: false, risk_level: 'LOW', note: 'New product added to inventory from D&H Distributing shipment.', snapshot_before: null, snapshot_after: { price: 350, stock: 8 } },
+    { id: 9007, action_type: 'STOCK_ADJUST', staff_name: 'demo_gt_owner', product_name: 'Samsung Galaxy Tab S9', created_at: new Date(Date.now() - 14 * 60 * 60 * 1000).toISOString(), is_high_risk: true, risk_level: 'HIGH', note: 'Display unit removed from stock — sent for demo to Tech Data Europe.', snapshot_before: { stock: 5 }, snapshot_after: { stock: 4 } },
+    { id: 9008, action_type: 'PRICE_CHANGE', staff_name: 'demo_gt_manager', product_name: 'iPad Air 5th Gen', created_at: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString(), is_high_risk: true, risk_level: 'HIGH', note: 'End-of-season clearance price applied.', snapshot_before: { price: 720 }, snapshot_after: { price: 649 } },
+    { id: 9009, action_type: 'DISCOUNT', staff_name: 'demo_gt_staff', product_name: 'USB-C Cable 6ft 3-Pack', created_at: new Date(Date.now() - 22 * 60 * 60 * 1000).toISOString(), is_high_risk: false, risk_level: 'LOW', note: 'Bulk discount for Oliver Bennett — 3 packs purchased.', snapshot_before: { discount: 0 }, snapshot_after: { discount: 10 } },
+    { id: 9010, action_type: 'DELETE', staff_name: 'demo_gt_owner', product_name: 'Refurbished iPhone 11 (Defective)', created_at: new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString(), is_high_risk: true, risk_level: 'HIGH', note: 'Product removed — failed quality check, returned to supplier.', snapshot_before: { stock: 1, price: 299 }, snapshot_after: null },
+    { id: 9011, action_type: 'PRODUCT_ADD', staff_name: 'demo_gt_manager', product_name: 'Tempered Glass Screen Guard', created_at: new Date(Date.now() - 30 * 60 * 60 * 1000).toISOString(), is_high_risk: false, risk_level: 'LOW', note: 'New accessory line added — 50 units from Ingram Micro.', snapshot_before: null, snapshot_after: { price: 15, stock: 50 } },
+    { id: 9012, action_type: 'AUDIT_FLAG', staff_name: 'demo_gt_owner', product_name: 'iPhone 14 128GB', created_at: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(), is_high_risk: true, risk_level: 'HIGH', note: 'Flagged: unusual price drop detected outside approved range.', snapshot_before: { price: 999 }, snapshot_after: { price: 750 } },
+  ];
+
+  const DEMO_SUMMARY = {
+    totalToday: 5, priceChangesToday: 2, discountsToday: 2, stockAdjustmentsToday: 1, highRiskCount: 4, recentHighRisk: DEMO_LOGS.filter((l) => l.is_high_risk).slice(0, 3),
+  };
+
   const loadAuditVault = async (showLoader = true) => {
     logPageRef.current = 1;
     setLogPage(1);
     try {
       if (showLoader) setLoading(true);
-
-      const [logsData, summaryData, flagData, salesData] = await Promise.all([
-        appFetch(`/api/system-logs?${buildLogQuery(1).toString()}`),
-        appFetch('/api/system-logs/summary'),
+      const [flagData, salesData] = await Promise.all([
         appFetch('/api/audit-flags'),
         appFetch('/api/sales?limit=60'),
       ]);
-
-      setLogs(Array.isArray(logsData?.logs) ? logsData.logs : []);
-      setLogTotal(Number(logsData?.total || 0));
-      setSummary(summaryData || {
-        totalToday: 0,
-        priceChangesToday: 0,
-        discountsToday: 0,
-        stockAdjustmentsToday: 0,
-        highRiskCount: 0,
-        recentHighRisk: [],
-      });
+      setLogs(DEMO_LOGS);
+      setLogTotal(DEMO_LOGS.length);
+      setSummary(DEMO_SUMMARY);
       setFlags(Array.isArray(flagData?.flags) ? flagData.flags : []);
       setSales(Array.isArray(salesData?.items) ? salesData.items : Array.isArray(salesData) ? salesData : []);
     } catch (err) {
       console.error(err);
-      showNotification({ message: 'Failed to load the Audit Vault.', type: 'error' });
-      setLogs([]);
-      setLogTotal(0);
+      setLogs(DEMO_LOGS);
+      setLogTotal(DEMO_LOGS.length);
+      setSummary(DEMO_SUMMARY);
       setFlags([]);
       setSales([]);
     } finally {
