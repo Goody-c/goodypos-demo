@@ -144,56 +144,48 @@
 :root:not([data-theme='dark']) .text-amber-400,
 :root:not([data-theme='dark']) .text-amber-300 {
   color: #78350f !important; /* amber-900 */
-  font-weight: inherit;
 }
 /* Success / Emerald */
 :root:not([data-theme='dark']) .text-emerald-500,
 :root:not([data-theme='dark']) .text-emerald-400,
 :root:not([data-theme='dark']) .text-emerald-300 {
   color: #064e3b !important; /* emerald-900 */
-  font-weight: inherit;
 }
 /* Success / Green */
 :root:not([data-theme='dark']) .text-green-500,
 :root:not([data-theme='dark']) .text-green-400,
 :root:not([data-theme='dark']) .text-green-300 {
   color: #14532d !important; /* green-900 */
-  font-weight: inherit;
 }
 /* Error / Rose */
 :root:not([data-theme='dark']) .text-rose-500,
 :root:not([data-theme='dark']) .text-rose-400,
 :root:not([data-theme='dark']) .text-rose-300 {
   color: #881337 !important; /* rose-900 */
-  font-weight: inherit;
 }
 /* Error / Red */
 :root:not([data-theme='dark']) .text-red-500,
 :root:not([data-theme='dark']) .text-red-400,
 :root:not([data-theme='dark']) .text-red-300 {
   color: #7f1d1d !important; /* red-900 */
-  font-weight: inherit;
 }
 /* Info / Sky */
 :root:not([data-theme='dark']) .text-sky-500,
 :root:not([data-theme='dark']) .text-sky-400,
 :root:not([data-theme='dark']) .text-sky-300 {
   color: #0c4a6e !important; /* sky-900 */
-  font-weight: inherit;
 }
 /* Info / Blue */
 :root:not([data-theme='dark']) .text-blue-500,
 :root:not([data-theme='dark']) .text-blue-400,
 :root:not([data-theme='dark']) .text-blue-300 {
   color: #1e3a8a !important; /* blue-900 */
-  font-weight: inherit;
 }
 /* Info / Indigo */
 :root:not([data-theme='dark']) .text-indigo-500,
 :root:not([data-theme='dark']) .text-indigo-400,
 :root:not([data-theme='dark']) .text-indigo-300 {
   color: #312e81 !important; /* indigo-900 */
-  font-weight: inherit;
 }
 /* Brand / Violet & Purple */
 :root:not([data-theme='dark']) .text-violet-500,
@@ -203,14 +195,12 @@
 :root:not([data-theme='dark']) .text-purple-400,
 :root:not([data-theme='dark']) .text-purple-300 {
   color: #4c1d95 !important; /* violet-900 */
-  font-weight: inherit;
 }
 /* Teal / Cyan */
 :root:not([data-theme='dark']) .text-teal-500,
 :root:not([data-theme='dark']) .text-teal-400,
 :root:not([data-theme='dark']) .text-teal-300 {
   color: #134e4a !important; /* teal-900 */
-  font-weight: inherit;
 }
 
 /* ── 3. Badge border definitions — visible against white page ── */
