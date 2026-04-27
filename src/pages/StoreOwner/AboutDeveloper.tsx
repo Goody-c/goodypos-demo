@@ -394,7 +394,7 @@ const AboutDeveloper: React.FC = () => {
         <div className="relative z-10">
           <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-fuchsia-200">Get in touch</p>
           <h2 className="text-2xl font-black sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Questions or support?</h2>
-          <p className="mt-2 max-w-lg text-sm text-white/82">Reach out on X or through in-app support. Response time is typically within 1 hour.</p>
+          <p className="mt-2 max-w-lg text-sm text-white/82">Reach out on X, by email, or through in-app support. Response time is typically within 1 hour.</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a
               href="https://x.com/goody_apps"
@@ -406,6 +406,16 @@ const AboutDeveloper: React.FC = () => {
               <span>
                 <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/68">Business X</span>
                 <span className="block text-sm font-semibold text-white">@goody_apps</span>
+              </span>
+            </a>
+            <a
+              href="mailto:contact@goodyapps.com"
+              className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-white backdrop-blur transition hover:bg-white/20"
+            >
+              <span className="rounded-xl bg-white/10 p-2 text-sky-300"><MessageCircle size={15} /></span>
+              <span>
+                <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/68">Email</span>
+                <span className="block text-sm font-semibold text-white">contact@goodyapps.com</span>
               </span>
             </a>
             <div className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 backdrop-blur">
