@@ -25,6 +25,8 @@ import {
   Wrench,
   Clock3,
   X,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 
 const Login = lazy(() => import('./pages/Login'));
@@ -92,9 +94,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try { return localStorage.getItem('sidebar-collapsed') === 'true'; } catch { return false; }
+  });
   const mainContentRef = useRef<HTMLElement | null>(null);
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  const toggleSidebar = () => setSidebarCollapsed(prev => {
+    const next = !prev;
+    try { localStorage.setItem('sidebar-collapsed', String(next)); } catch {}
+    return next;
+  });
 
   useEffect(() => {
     setMobileMenuOpen(false);
@@ -106,7 +117,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
     return () => window.cancelAnimationFrame(frame);
   }, [location.pathname]);
-  const navLinkClass = 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] transition-colors min-h-[44px]';;
+  const navLinkClass = `flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] transition-colors min-h-[44px] ${sidebarCollapsed ? 'lg:justify-center lg:px-2' : ''}`;
   const isNavRouteActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
     return location.pathname === path || location.pathname.startsWith(`${path}/`);
@@ -115,6 +126,12 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const isActive = isNavRouteActive(path);
     return `${navLinkClass} ${isActive ? 'bg-slate-800 text-white shadow-[0_10px_30px_-18px_rgba(56,189,248,0.95)] ring-1 ring-sky-400/40' : 'text-slate-100 hover:bg-slate-800/80'} ${extraClass}`.trim();
   };
+  const navLabel = (text: string) => (
+    <span className={sidebarCollapsed ? 'lg:hidden' : ''}>{text}</span>
+  );
+  const sectionLabel = (text: string) => (
+    <p className={`mb-1 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-500/75 ${sidebarCollapsed ? 'lg:hidden' : ''}`}>{text}</p>
+  );
 
   const normalizedRole = String(user?.role || '');
   const hasManagementAccess = normalizedRole === 'STORE_ADMIN' || normalizedRole === 'MANAGER' || normalizedRole === 'ACCOUNTANT';
@@ -138,77 +155,84 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       />
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-[min(18rem,calc(100vw-2rem))] flex-col bg-slate-900 text-white shadow-2xl transition-transform duration-200 print:hidden sm:w-72 sm:max-w-[85vw] lg:static lg:w-64 lg:max-w-none lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed inset-y-0 left-0 z-50 flex w-[min(18rem,calc(100vw-2rem))] flex-col bg-slate-900 text-white shadow-2xl transition-all duration-300 print:hidden sm:w-72 sm:max-w-[85vw] lg:static lg:max-w-none lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} ${sidebarCollapsed ? 'lg:w-16' : 'lg:w-64'}`}
       >
-        <div className="flex items-center justify-between border-b border-slate-800 p-5 text-xl font-bold sm:text-2xl">
-          <div className="flex items-center gap-2">
-            <ShieldAlert className="text-red-500" />
-            Goody-POS
+        <div className={`flex items-center border-b border-slate-800 p-4 text-xl font-bold sm:text-2xl ${sidebarCollapsed ? 'lg:justify-center' : 'justify-between'}`}>
+          <div className={`flex items-center gap-2 ${sidebarCollapsed ? 'lg:gap-0' : ''}`}>
+            <ShieldAlert className="text-red-500 shrink-0" />
+            <span className={sidebarCollapsed ? 'lg:hidden' : ''}>Goody-POS</span>
           </div>
           <button onClick={closeMobileMenu} className="rounded-lg p-2.5 min-w-[44px] min-h-[44px] text-slate-300 hover:bg-slate-800 lg:hidden">
             <X size={18} />
           </button>
+          <button
+            onClick={toggleSidebar}
+            className={`hidden lg:flex items-center justify-center rounded-lg p-2 min-w-[36px] min-h-[36px] text-slate-400 hover:bg-slate-800 hover:text-white transition-colors ${sidebarCollapsed ? 'mt-0' : ''}`}
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {sidebarCollapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
+          </button>
         </div>
 
-        <nav className="flex-1 space-y-3 overflow-y-auto px-3 py-4">
+        <nav className="flex-1 space-y-3 overflow-y-auto overflow-x-hidden px-3 py-4">
           {user?.role === 'SYSTEM_ADMIN' ? (
-            <Link to="/admin" onClick={closeMobileMenu} className={getNavLinkClass('/admin')}>
-              <Store size={18} /> Command Center
+            <Link to="/admin" onClick={closeMobileMenu} className={getNavLinkClass('/admin')} title="Command Center">
+              <Store size={18} className="shrink-0" /> {navLabel('Command Center')}
             </Link>
           ) : (
             <>
               <div>
-                <p className="mb-1 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-500/75">Main</p>
+                {sectionLabel('Main')}
                 <div className="space-y-1">
-                  <Link to="/" onClick={closeMobileMenu} className={getNavLinkClass('/')}>
-                    <LayoutDashboard size={18} /> Dashboard
+                  <Link to="/" onClick={closeMobileMenu} className={getNavLinkClass('/')} title="Dashboard">
+                    <LayoutDashboard size={18} className="shrink-0" /> {navLabel('Dashboard')}
                   </Link>
                   {canUsePos && (
-                    <Link to="/pos" onClick={closeMobileMenu} className={getNavLinkClass('/pos')}>
-                      <ShoppingCart size={18} /> POS Terminal
+                    <Link to="/pos" onClick={closeMobileMenu} className={getNavLinkClass('/pos')} title="POS Terminal">
+                      <ShoppingCart size={18} className="shrink-0" /> {navLabel('POS Terminal')}
                     </Link>
                   )}
-                  <Link to="/inventory" onClick={closeMobileMenu} className={getNavLinkClass('/inventory')}>
-                    <Package size={18} /> Inventory
+                  <Link to="/inventory" onClick={closeMobileMenu} className={getNavLinkClass('/inventory')} title="Inventory">
+                    <Package size={18} className="shrink-0" /> {navLabel('Inventory')}
                   </Link>
-                  <Link to="/product-overview" onClick={closeMobileMenu} className={getNavLinkClass('/product-overview')}>
-                    <LayoutGrid size={18} /> Product Overview
+                  <Link to="/product-overview" onClick={closeMobileMenu} className={getNavLinkClass('/product-overview')} title="Product Overview">
+                    <LayoutGrid size={18} className="shrink-0" /> {navLabel('Product Overview')}
                   </Link>
                   {canAccessInvoices && (
-                    <Link to="/invoices" onClick={closeMobileMenu} className={getNavLinkClass('/invoices')}>
-                      <FileText size={18} /> Invoices
+                    <Link to="/invoices" onClick={closeMobileMenu} className={getNavLinkClass('/invoices')} title="Invoices">
+                      <FileText size={18} className="shrink-0" /> {navLabel('Invoices')}
                     </Link>
                   )}
                 </div>
               </div>
 
               <div className="border-t border-slate-800/80 pt-2">
-                <p className="mb-1 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-500/75">Operations</p>
+                {sectionLabel('Operations')}
                 <div className="space-y-1">
-                  <Link to="/handover-notes" onClick={closeMobileMenu} className={getNavLinkClass('/handover-notes')}>
-                    <FileText size={18} /> Staff Handover
+                  <Link to="/handover-notes" onClick={closeMobileMenu} className={getNavLinkClass('/handover-notes')} title="Staff Handover">
+                    <FileText size={18} className="shrink-0" /> {navLabel('Staff Handover')}
                   </Link>
-                  <Link to="/attendance" onClick={closeMobileMenu} className={getNavLinkClass('/attendance')}>
-                    <Clock3 size={18} /> Attendance & Clock-In
+                  <Link to="/attendance" onClick={closeMobileMenu} className={getNavLinkClass('/attendance')} title="Attendance & Clock-In">
+                    <Clock3 size={18} className="shrink-0" /> {navLabel('Attendance & Clock-In')}
                   </Link>
                   {hasRepairAccess && (
-                    <Link to="/repairs" onClick={closeMobileMenu} className={getNavLinkClass('/repairs')}>
-                      <Wrench size={18} /> Repairs & Warranty
+                    <Link to="/repairs" onClick={closeMobileMenu} className={getNavLinkClass('/repairs')} title="Repairs & Warranty">
+                      <Wrench size={18} className="shrink-0" /> {navLabel('Repairs & Warranty')}
                     </Link>
                   )}
                   {hasRepairAccess && (
-                    <Link to="/layaways" onClick={closeMobileMenu} className={getNavLinkClass('/layaways')}>
-                      <WalletCards size={18} /> Installment Plan
+                    <Link to="/layaways" onClick={closeMobileMenu} className={getNavLinkClass('/layaways')} title="Installment Plan">
+                      <WalletCards size={18} className="shrink-0" /> {navLabel('Installment Plan')}
                     </Link>
                   )}
                   {canAccessProformas && (
-                    <Link to="/pro-formas" onClick={closeMobileMenu} className={getNavLinkClass('/pro-formas')}>
-                      <FileText size={18} /> Pro-forma Invoices
+                    <Link to="/pro-formas" onClick={closeMobileMenu} className={getNavLinkClass('/pro-formas')} title="Pro-forma Invoices">
+                      <FileText size={18} className="shrink-0" /> {navLabel('Pro-forma Invoices')}
                     </Link>
                   )}
                   {canAccessSourcedItems && (
-                    <Link to="/sourced-items" onClick={closeMobileMenu} className={getNavLinkClass('/sourced-items')}>
-                      <Package size={18} /> Sourced Items
+                    <Link to="/sourced-items" onClick={closeMobileMenu} className={getNavLinkClass('/sourced-items')} title="Sourced Items">
+                      <Package size={18} className="shrink-0" /> {navLabel('Sourced Items')}
                     </Link>
                   )}
                 </div>
@@ -216,73 +240,73 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
               {(canAccessProcurementTools || hasManagementAccess || canAccessConsignmentHub) && (
                 <div className="border-t border-slate-800/80 pt-2">
-                  <p className="mb-1 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-500/75">Management</p>
+                  {sectionLabel('Management')}
                   <div className="space-y-1">
                     {canAccessConsignmentHub && !hasManagementAccess && (
-                      <Link to="/consignment-hub" onClick={closeMobileMenu} className={getNavLinkClass('/consignment-hub')}>
-                        <Package size={18} /> Consignment Hub
+                      <Link to="/consignment-hub" onClick={closeMobileMenu} className={getNavLinkClass('/consignment-hub')} title="Consignment Hub">
+                        <Package size={18} className="shrink-0" /> {navLabel('Consignment Hub')}
                       </Link>
                     )}
                     {canAccessProcurementTools && (
                       <>
-                        <Link to="/purchases" onClick={closeMobileMenu} className={getNavLinkClass('/purchases')}>
-                          <Package size={18} /> Purchases & Suppliers
+                        <Link to="/purchases" onClick={closeMobileMenu} className={getNavLinkClass('/purchases')} title="Purchases & Suppliers">
+                          <Package size={18} className="shrink-0" /> {navLabel('Purchases & Suppliers')}
                         </Link>
-                        <Link to="/stock-adjustments" onClick={closeMobileMenu} className={getNavLinkClass('/stock-adjustments')}>
-                          <SettingsIcon size={18} /> Stock Adjustments
+                        <Link to="/stock-adjustments" onClick={closeMobileMenu} className={getNavLinkClass('/stock-adjustments')} title="Stock Adjustments">
+                          <SettingsIcon size={18} className="shrink-0" /> {navLabel('Stock Adjustments')}
                         </Link>
                       </>
                     )}
                     {hasManagementAccess && (
                       <>
-                        <Link to="/analytics" onClick={closeMobileMenu} className={getNavLinkClass('/analytics')}>
-                          <BarChart3 size={18} /> Real-Time Analytics
+                        <Link to="/analytics" onClick={closeMobileMenu} className={getNavLinkClass('/analytics')} title="Real-Time Analytics">
+                          <BarChart3 size={18} className="shrink-0" /> {navLabel('Real-Time Analytics')}
                         </Link>
-                        <Link to="/customers" onClick={closeMobileMenu} className={getNavLinkClass('/customers')}>
-                          <UserCircle size={18} /> Customers
+                        <Link to="/customers" onClick={closeMobileMenu} className={getNavLinkClass('/customers')} title="Customers">
+                          <UserCircle size={18} className="shrink-0" /> {navLabel('Customers')}
                         </Link>
-                        <Link to="/expenses" onClick={closeMobileMenu} className={getNavLinkClass('/expenses')}>
-                          <Banknote size={18} /> Expense Tracker
+                        <Link to="/expenses" onClick={closeMobileMenu} className={getNavLinkClass('/expenses')} title="Expense Tracker">
+                          <Banknote size={18} className="shrink-0" /> {navLabel('Expense Tracker')}
                         </Link>
-                        <Link to="/vendor-payables" onClick={closeMobileMenu} className={getNavLinkClass('/vendor-payables')}>
-                          <WalletCards size={18} /> Vendor Payables
+                        <Link to="/vendor-payables" onClick={closeMobileMenu} className={getNavLinkClass('/vendor-payables')} title="Vendor Payables">
+                          <WalletCards size={18} className="shrink-0" /> {navLabel('Vendor Payables')}
                         </Link>
                         {canAccessConsignmentHub && (
-                          <Link to="/consignment-hub" onClick={closeMobileMenu} className={getNavLinkClass('/consignment-hub')}>
-                            <Package size={18} /> Consignment Hub
+                          <Link to="/consignment-hub" onClick={closeMobileMenu} className={getNavLinkClass('/consignment-hub')} title="Consignment Hub">
+                            <Package size={18} className="shrink-0" /> {navLabel('Consignment Hub')}
                           </Link>
                         )}
                         {hasFinancialReportAccess && (
-                          <Link to="/financial-reports" onClick={closeMobileMenu} className={getNavLinkClass('/financial-reports')}>
-                            <BarChart3 size={18} /> Financial Reports
+                          <Link to="/financial-reports" onClick={closeMobileMenu} className={getNavLinkClass('/financial-reports')} title="Financial Reports">
+                            <BarChart3 size={18} className="shrink-0" /> {navLabel('Financial Reports')}
                           </Link>
                         )}
                         {normalizedRole !== 'ACCOUNTANT' && (
                           <>
-                            <Link to="/market-collections" onClick={closeMobileMenu} className={getNavLinkClass('/market-collections')}>
-                              <Package size={18} /> Market Collections
+                            <Link to="/market-collections" onClick={closeMobileMenu} className={getNavLinkClass('/market-collections')} title="Market Collections">
+                              <Package size={18} className="shrink-0" /> {navLabel('Market Collections')}
                             </Link>
-                            <Link to="/returns" onClick={closeMobileMenu} className={getNavLinkClass('/returns')}>
-                              <RotateCcw size={18} /> Returns & Refunds
+                            <Link to="/returns" onClick={closeMobileMenu} className={getNavLinkClass('/returns')} title="Returns & Refunds">
+                              <RotateCcw size={18} className="shrink-0" /> {navLabel('Returns & Refunds')}
                             </Link>
-                            <Link to="/staff" onClick={closeMobileMenu} className={getNavLinkClass('/staff')}>
-                              <Users size={18} /> Staff Management
+                            <Link to="/staff" onClick={closeMobileMenu} className={getNavLinkClass('/staff')} title="Staff Management">
+                              <Users size={18} className="shrink-0" /> {navLabel('Staff Management')}
                             </Link>
-                            <Link to="/transfer-vault" onClick={closeMobileMenu} className={getNavLinkClass('/transfer-vault')}>
-                              <ArrowRightLeft size={18} /> Transfer Vault
+                            <Link to="/transfer-vault" onClick={closeMobileMenu} className={getNavLinkClass('/transfer-vault')} title="Transfer Vault">
+                              <ArrowRightLeft size={18} className="shrink-0" /> {navLabel('Transfer Vault')}
                             </Link>
-                            <Link to="/settings" onClick={closeMobileMenu} className={getNavLinkClass('/settings')}>
-                              <SettingsIcon size={18} /> Store Settings
+                            <Link to="/settings" onClick={closeMobileMenu} className={getNavLinkClass('/settings')} title="Store Settings">
+                              <SettingsIcon size={18} className="shrink-0" /> {navLabel('Store Settings')}
                             </Link>
                           </>
                         )}
                         {hasAuditVaultAccess && (
-                          <Link to="/audit" onClick={closeMobileMenu} className={getNavLinkClass('/audit')}>
-                            <ShieldAlert size={18} /> Audit Vault
+                          <Link to="/audit" onClick={closeMobileMenu} className={getNavLinkClass('/audit')} title="Audit Vault">
+                            <ShieldAlert size={18} className="shrink-0" /> {navLabel('Audit Vault')}
                           </Link>
                         )}
-                        <Link to="/reports" onClick={closeMobileMenu} className={getNavLinkClass('/reports')}>
-                          <BarChart3 size={18} /> Sales Reports
+                        <Link to="/reports" onClick={closeMobileMenu} className={getNavLinkClass('/reports')} title="Sales Reports">
+                          <BarChart3 size={18} className="shrink-0" /> {navLabel('Sales Reports')}
                         </Link>
                       </>
                     )}
@@ -291,14 +315,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               )}
 
               <div className="border-t border-slate-800/80 pt-2">
-                <p className="mb-1 px-3 text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-500/75">Info</p>
+                {sectionLabel('Info')}
                 <div className="space-y-1">
                   <Link
                     to="/about-goody-pos"
                     onClick={closeMobileMenu}
+                    title="About Goody POS"
                     className={getNavLinkClass('/about-goody-pos', (isNavRouteActive('/about-goody-pos') || isNavRouteActive('/about-developer')) ? 'border border-fuchsia-300/80 bg-gradient-to-r from-violet-700 to-fuchsia-600 text-white shadow-[0_10px_30px_-12px_rgba(217,70,239,0.95)] ring-1 ring-fuchsia-300/60' : 'border border-fuchsia-500/20 bg-gradient-to-r from-violet-900/70 to-slate-900 text-fuchsia-50 hover:bg-violet-800/80')}
                   >
-                    <UserCircle size={18} /> About Goody POS
+                    <UserCircle size={18} className="shrink-0" /> {navLabel('About Goody POS')}
                   </Link>
                 </div>
               </div>
