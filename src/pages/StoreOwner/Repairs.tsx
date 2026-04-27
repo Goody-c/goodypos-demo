@@ -346,28 +346,27 @@ const Repairs: React.FC = () => {
   return (
     <div className="mx-auto max-w-7xl space-y-8">
       <header className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="rounded-2xl bg-indigo-900/20 p-3 text-indigo-600">
+              <div className="rounded-2xl bg-indigo-900/20 p-3 text-indigo-600 shrink-0">
                 <Wrench size={22} />
               </div>
               <div>
-                <h1 className="text-2xl font-black text-slate-900">Warranty & Repair Tracker</h1>
+                <h1 className="text-xl font-black text-slate-900 sm:text-2xl">Warranty & Repair Tracker</h1>
                 <p className="text-sm text-slate-500">Track device intake, repair progress, warranty status, pickup readiness, and balances.</p>
               </div>
             </div>
+            {canManageRepairs && (
+              <button
+                type="button"
+                onClick={() => setShowCreateModal(true)}
+                className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700"
+              >
+                <Plus size={15} /> <span className="hidden sm:inline">New Intake</span><span className="sm:hidden">New</span>
+              </button>
+            )}
           </div>
-
-          {canManageRepairs && (
-            <button
-              type="button"
-              onClick={() => setShowCreateModal(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700"
-            >
-              <Plus size={15} /> New Intake
-            </button>
-          )}
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
