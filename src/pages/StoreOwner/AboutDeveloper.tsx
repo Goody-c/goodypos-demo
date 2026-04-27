@@ -4,6 +4,7 @@ import {
   ArrowRightLeft,
   Banknote,
   BarChart3,
+  BookOpen,
   ChevronDown,
   Clock3,
   CreditCard,
@@ -17,9 +18,11 @@ import {
   ScanLine,
   Settings as SettingsIcon,
   ShieldCheck,
+  ShoppingCart,
   Sparkles,
   UserCircle2,
   Users,
+  Wrench,
   Zap,
 } from 'lucide-react';
 
@@ -27,6 +30,7 @@ const AboutDeveloper: React.FC = () => {
   const fallbackPhoto = '/developer-photo-placeholder.svg';
   const [photoSrc, setPhotoSrc] = useState('/developer-photo.jpg');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [openGuideIndex, setOpenGuideIndex] = useState<number | null>(0);
 
   const stats = useMemo(
     () => [
@@ -174,6 +178,144 @@ const AboutDeveloper: React.FC = () => {
       { icon: <SettingsIcon size={16} />, title: 'Receipt Layout & Brand Controls', desc: 'Configure receipt paper size, header, footer, bank details, and other document presentation settings.' },
       { icon: <Banknote size={16} />, title: 'Currency & Regional Format', desc: 'Choose the store currency with a searchable picker and keep pricing, receipts, and reports aligned with the region.' },
       { icon: <BarChart3 size={16} />, title: 'Big-Store Performance Scaling', desc: 'Server-side pagination, search optimization, and lighter rendering for large product and sales databases.' },
+    ],
+    []
+  );
+
+  const guides = useMemo(
+    () => [
+      {
+        icon: <ShoppingCart size={18} />,
+        title: 'Making a Sale at the POS Terminal',
+        color: 'text-violet-600',
+        bg: 'bg-violet-50',
+        border: 'border-violet-200',
+        accent: 'bg-violet-600',
+        steps: [
+          'Go to POS Terminal from the sidebar.',
+          'Search for a product by name or scan its barcode — it will be added to the cart.',
+          'Adjust quantity by tapping the item in the cart, or remove it with the trash icon.',
+          'Apply a discount (percentage or fixed amount) using the discount button if needed.',
+          'Select the payment method: Cash, Transfer, POS, or a split combination.',
+          'Enter the amount received, review the receipt preview, then tap Complete Sale.',
+          'Share the receipt via WhatsApp or print it directly from the receipt screen.',
+        ],
+      },
+      {
+        icon: <Package size={18} />,
+        title: 'Adding & Editing Products in Inventory',
+        color: 'text-emerald-600',
+        bg: 'bg-emerald-50',
+        border: 'border-emerald-200',
+        accent: 'bg-emerald-600',
+        steps: [
+          'Open Inventory from the sidebar.',
+          'Click Add Product and fill in the product name, category, price, and stock quantity.',
+          'Upload a product image (optional) and set a barcode or let the system auto-generate one.',
+          'Save the product — it will appear in the inventory list and be available at the POS.',
+          'To edit, double-tap any product row directly in the inventory list to update name, price, or stock inline.',
+          'Use the search bar and category filters to quickly locate products in large inventories.',
+        ],
+      },
+      {
+        icon: <ReceiptText size={18} />,
+        title: 'Finding & Sharing Invoices',
+        color: 'text-sky-600',
+        bg: 'bg-sky-50',
+        border: 'border-sky-200',
+        accent: 'bg-sky-600',
+        steps: [
+          'Go to Invoices from the sidebar.',
+          'Use the search bar to find an invoice by invoice number, customer name, or date.',
+          'Click any invoice to open the full preview with itemized breakdown and totals.',
+          'Download the invoice as a PDF in A4 or thermal layout using the download button.',
+          'Tap the WhatsApp button to send the invoice directly to a customer\'s phone number.',
+          'For pro-forma quotations, use Pro-forma Invoices in the Operations section instead.',
+        ],
+      },
+      {
+        icon: <Clock3 size={18} />,
+        title: 'Staff Attendance & Clock-In',
+        color: 'text-amber-600',
+        bg: 'bg-amber-50',
+        border: 'border-amber-200',
+        accent: 'bg-amber-600',
+        steps: [
+          'Go to Attendance & Clock-In from the sidebar.',
+          'Staff members tap Clock In at the start of their shift — the time is automatically recorded.',
+          'Add an optional shift note when clocking in (e.g. handover context, task for the day).',
+          'At the end of the shift, tap Clock Out to log the session end time.',
+          'Managers and owners can view all staff attendance records, filter by date, and see total hours worked.',
+          'Use the Staff Handover section to leave structured notes for the incoming shift.',
+        ],
+      },
+      {
+        icon: <Wrench size={18} />,
+        title: 'Logging a Repair or Warranty Job',
+        color: 'text-rose-600',
+        bg: 'bg-rose-50',
+        border: 'border-rose-200',
+        accent: 'bg-rose-600',
+        steps: [
+          'Open Repairs & Warranty from the sidebar under Operations.',
+          'Click New Repair and enter the customer name, device details, and fault description.',
+          'Assign a technician and set the initial status (e.g. Received, In Progress).',
+          'Save the job — it receives a unique repair reference number.',
+          'Update the status as work progresses: In Progress → Ready for Pickup → Completed.',
+          'Record any payment collected against the repair job before marking it complete.',
+          'Send a WhatsApp update to the customer when the device is ready for pickup.',
+        ],
+      },
+      {
+        icon: <CreditCard size={18} />,
+        title: 'Setting Up an Installment Plan (Layaway)',
+        color: 'text-indigo-600',
+        bg: 'bg-indigo-50',
+        border: 'border-indigo-200',
+        accent: 'bg-indigo-600',
+        steps: [
+          'Go to Installment Plan from the sidebar under Operations.',
+          'Click New Layaway and select or search for the customer.',
+          'Add the product(s) being reserved and set the total price.',
+          'Enter the initial deposit amount and the agreed payment due date.',
+          'Save the plan — the item is locked for the customer and tracked separately from regular stock.',
+          'Record each subsequent payment against the layaway as the customer pays in installments.',
+          'Once fully paid, mark the plan as Complete to release the item for final handover.',
+        ],
+      },
+      {
+        icon: <Banknote size={18} />,
+        title: 'Tracking Expenses',
+        color: 'text-orange-600',
+        bg: 'bg-orange-50',
+        border: 'border-orange-200',
+        accent: 'bg-orange-600',
+        steps: [
+          'Open Expense Tracker from the sidebar under Management.',
+          'Click Add Expense and enter the description, amount, and category (e.g. Utilities, Supplies).',
+          'Set the date of the expense and save.',
+          'All expenses are listed chronologically — use the date filter to narrow down a specific period.',
+          'The dashboard and analytics automatically deduct expenses when calculating net profit.',
+          'Export expense data to CSV from the Financial Reports section for accounting or review.',
+        ],
+      },
+      {
+        icon: <Users size={18} />,
+        title: 'Managing Staff & Roles',
+        color: 'text-teal-600',
+        bg: 'bg-teal-50',
+        border: 'border-teal-200',
+        accent: 'bg-teal-600',
+        steps: [
+          'Go to Staff Management from the sidebar under Management.',
+          'Click Add Staff and fill in the username, role, and initial password.',
+          'Assign a role: Staff, Manager, Accountant, or Procurement Officer — each has different access levels.',
+          'The new staff member can log in immediately using the credentials you set.',
+          'To reset a password or checkout PIN, find the staff member in the list and use the Reset options.',
+          'View each staff member\'s sales history and performance directly from their profile.',
+          'Remove a staff account by selecting the account and choosing the deactivate or delete option.',
+        ],
+      },
     ],
     []
   );
@@ -354,6 +496,55 @@ const AboutDeveloper: React.FC = () => {
               <p className="mt-1 text-[11px] leading-5 text-slate-500">{f.desc}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── HOW-TO GUIDES ── */}
+      <section className="rounded-[28px] border border-slate-100 bg-[linear-gradient(135deg,#ffffff,#f8fafc_50%,#eff6ff)] p-6 shadow-sm">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">Step-by-step</p>
+            <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>How to use key features</h2>
+          </div>
+          <span className="flex items-center gap-1.5 rounded-full border border-sky-200 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-sky-700">
+            <BookOpen size={11} /> Guides
+          </span>
+        </div>
+        <div className="space-y-2">
+          {guides.map((guide, index) => {
+            const expanded = openGuideIndex === index;
+            return (
+              <div key={guide.title} className={`overflow-hidden rounded-2xl border transition-all duration-200 ${expanded ? `${guide.border} ${guide.bg}` : 'border-slate-200 bg-white'}`}>
+                <button
+                  type="button"
+                  onClick={() => setOpenGuideIndex(expanded ? null : index)}
+                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`rounded-xl p-2 text-white ${expanded ? guide.accent : 'bg-slate-200 text-slate-500'} transition-colors`}>
+                      {guide.icon}
+                    </span>
+                    <span className={`text-sm font-black ${expanded ? guide.color : 'text-slate-900'}`}>{guide.title}</span>
+                  </div>
+                  <ChevronDown className={`shrink-0 transition-transform duration-300 ${expanded ? `rotate-180 ${guide.color}` : 'text-slate-400'}`} size={16} />
+                </button>
+                {expanded && (
+                  <div className="border-t border-slate-200/60 px-5 py-4">
+                    <ol className="space-y-3">
+                      {guide.steps.map((step, i) => (
+                        <li key={i} className="flex items-start gap-3">
+                          <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black text-white ${guide.accent}`}>
+                            {i + 1}
+                          </span>
+                          <span className="text-sm leading-6 text-slate-600">{step}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
 
