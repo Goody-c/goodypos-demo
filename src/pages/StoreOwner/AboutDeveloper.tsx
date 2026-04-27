@@ -26,11 +26,15 @@ import {
   Zap,
 } from 'lucide-react';
 
+const TABS = ['Overview', 'Features', "What's New", 'Guides', 'Support'] as const;
+type Tab = (typeof TABS)[number];
+
 const AboutDeveloper: React.FC = () => {
   const fallbackPhoto = '/developer-photo-placeholder.svg';
   const [photoSrc, setPhotoSrc] = useState('/developer-photo.jpg');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [openGuideIndex, setOpenGuideIndex] = useState<number | null>(0);
+  const [activeTab, setActiveTab] = useState<Tab>('Overview');
 
   const stats = useMemo(
     () => [
@@ -332,15 +336,13 @@ const AboutDeveloper: React.FC = () => {
   );
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 pb-10">
+    <div className="mx-auto max-w-6xl space-y-5 pb-10">
 
-      {/* ── HERO ── */}
+      {/* ── HERO (always visible) ── */}
       <section className="relative overflow-hidden rounded-[32px] bg-[radial-gradient(ellipse_at_top_left,#7c3aed_0%,#4f46e5_28%,#0f172a_65%,#020617_100%)] p-8 text-white shadow-[0_40px_100px_-40px_rgba(79,70,229,0.8)] sm:p-12">
-        {/* ambient blobs */}
         <div className="pointer-events-none absolute -right-24 -top-20 h-72 w-72 rounded-full bg-fuchsia-500/25 blur-[80px]" />
         <div className="pointer-events-none absolute -bottom-16 left-1/3 h-64 w-64 rounded-full bg-indigo-400/20 blur-[80px]" />
         <div className="pointer-events-none absolute bottom-0 right-1/4 h-48 w-48 rounded-full bg-amber-400/15 blur-[70px]" />
-        {/* grid texture */}
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:48px_48px]" />
 
         <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
@@ -357,9 +359,7 @@ const AboutDeveloper: React.FC = () => {
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {['POS Terminal', 'Smart Retail', 'Market Collections', 'Offline Desktop', 'PostgreSQL Core', 'Security + Scale'].map((b) => (
-                <span key={b} className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold text-white/92 backdrop-blur">
-                  {b}
-                </span>
+                <span key={b} className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-bold text-white/92 backdrop-blur">{b}</span>
               ))}
             </div>
           </div>
@@ -383,7 +383,6 @@ const AboutDeveloper: React.FC = () => {
           </div>
         </div>
 
-        {/* stat strip */}
         <div className="relative z-10 mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label} className="rounded-2xl border border-white/15 bg-white/10 px-5 py-4 backdrop-blur transition hover:bg-white/15">
@@ -394,231 +393,247 @@ const AboutDeveloper: React.FC = () => {
         </div>
       </section>
 
-      {/* ── TWO MODES ── */}
-      <section className="grid gap-4 sm:grid-cols-2">
-        {modes.map((m) => (
-          <div key={m.title} className={`relative overflow-hidden rounded-[28px] border bg-[linear-gradient(135deg,#0f172a,#1e1b4b)] p-6 ${m.border}`}>
-            <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br opacity-60 ${m.accent}`} />
-            <div className="relative z-10">
-              <div className="mb-3 flex items-center gap-2">
-                <div className={`h-2 w-2 rounded-full ${m.dot}`} />
-                <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${m.tagColor}`}>{m.tag}</span>
-              </div>
-              <p className="text-2xl font-black text-white" style={{ fontFamily: 'var(--font-display)' }}>{m.title}</p>
-              <p className="mt-0.5 text-xs font-bold text-white/72">{m.subtitle}</p>
-              <p className="mt-3 text-sm leading-7 text-white/80">{m.desc}</p>
-            </div>
-          </div>
+      {/* ── TAB BAR ── */}
+      <div className="flex overflow-x-auto rounded-2xl border border-slate-200 bg-white p-1.5 shadow-sm gap-1 scrollbar-none">
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => setActiveTab(tab)}
+            className={`shrink-0 rounded-xl px-4 py-2 text-sm font-bold transition-all ${
+              activeTab === tab
+                ? 'bg-violet-600 text-white shadow-sm'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'
+            }`}
+          >
+            {tab}
+          </button>
         ))}
-      </section>
+      </div>
 
-      {/* ── PHILOSOPHY STRIP ── */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          { title: 'Clean workflows', desc: 'Fast actions, less clutter, and clearer checkout, reporting, and admin flows.', accent: 'border-violet-200 bg-violet-50', label: 'text-violet-700' },
-          { title: 'Real business focus', desc: 'Built around what owners, managers, and staff actually face every day.', accent: 'border-sky-200 bg-sky-50', label: 'text-sky-700' },
-          { title: 'Security + accountability', desc: 'Protected actions, PIN tools, audit visibility, and safer store-wide workflows.', accent: 'border-emerald-200 bg-emerald-50', label: 'text-emerald-700' },
-          { title: 'Modern presentation', desc: 'Polished cards, better PDFs, branded documents, and cleaner mobile responsiveness.', accent: 'border-amber-200 bg-amber-50', label: 'text-amber-700' },
-        ].map((c) => (
-          <div key={c.title} className={`rounded-2xl border p-5 ${c.accent}`}>
-            <p className={`text-sm font-black ${c.label}`}>{c.title}</p>
-            <p className="mt-2 text-xs leading-6 text-slate-600">{c.desc}</p>
-          </div>
-        ))}
-      </section>
+      {/* ── TAB CONTENT ── */}
 
-      {/* ── FEATURE PILLARS ── */}
-      <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-6">
-          <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">What's inside</p>
-          <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Six pillars of the platform</h2>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {pillars.map((p) => (
-            <div key={p.title} className={`rounded-2xl border p-5 ${p.bg} ${p.border}`}>
-              <div className={`mb-3 inline-flex rounded-xl bg-white p-2.5 shadow-sm ${p.color}`}>{p.icon}</div>
-              <p className={`text-sm font-black ${p.color}`}>{p.title}</p>
-              <ul className="mt-3 space-y-1.5">
-                {p.items.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-xs text-slate-300">
-                    <span className="mt-0.5 shrink-0 text-slate-400">→</span>{item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── RECENT UPGRADES ── */}
-      <section className="rounded-[28px] border border-slate-100 bg-[linear-gradient(135deg,#ffffff,#f8fafc_50%,#f5f3ff)] p-6 shadow-sm">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">What's been added</p>
-            <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Recent upgrades</h2>
-          </div>
-          <span className="rounded-full border border-violet-200 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-violet-700">Continuously updated</span>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {recentUpgrades.map((u) => (
-            <div key={u.title} className="group flex gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-              <div className="mt-0.5 shrink-0 rounded-xl bg-gradient-to-br from-violet-100 to-sky-100 p-2 text-violet-600 transition group-hover:scale-110">
-                {u.icon}
+      {activeTab === 'Overview' && (
+        <div className="space-y-5">
+          {/* Two Modes */}
+          <section className="grid gap-4 sm:grid-cols-2">
+            {modes.map((m) => (
+              <div key={m.title} className={`relative overflow-hidden rounded-[28px] border bg-[linear-gradient(135deg,#0f172a,#1e1b4b)] p-6 ${m.border}`}>
+                <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br opacity-60 ${m.accent}`} />
+                <div className="relative z-10">
+                  <div className="mb-3 flex items-center gap-2">
+                    <div className={`h-2 w-2 rounded-full ${m.dot}`} />
+                    <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${m.tagColor}`}>{m.tag}</span>
+                  </div>
+                  <p className="text-2xl font-black text-white" style={{ fontFamily: 'var(--font-display)' }}>{m.title}</p>
+                  <p className="mt-0.5 text-xs font-bold text-white/72">{m.subtitle}</p>
+                  <p className="mt-3 text-sm leading-7 text-white/80">{m.desc}</p>
+                </div>
               </div>
+            ))}
+          </section>
+
+          {/* Philosophy */}
+          <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { title: 'Clean workflows', desc: 'Fast actions, less clutter, and clearer checkout, reporting, and admin flows.', accent: 'border-violet-200 bg-violet-50', label: 'text-violet-700' },
+              { title: 'Real business focus', desc: 'Built around what owners, managers, and staff actually face every day.', accent: 'border-sky-200 bg-sky-50', label: 'text-sky-700' },
+              { title: 'Security + accountability', desc: 'Protected actions, PIN tools, audit visibility, and safer store-wide workflows.', accent: 'border-emerald-200 bg-emerald-50', label: 'text-emerald-700' },
+              { title: 'Modern presentation', desc: 'Polished cards, better PDFs, branded documents, and cleaner mobile responsiveness.', accent: 'border-amber-200 bg-amber-50', label: 'text-amber-700' },
+            ].map((c) => (
+              <div key={c.title} className={`rounded-2xl border p-5 ${c.accent}`}>
+                <p className={`text-sm font-black ${c.label}`}>{c.title}</p>
+                <p className="mt-2 text-xs leading-6 text-slate-600">{c.desc}</p>
+              </div>
+            ))}
+          </section>
+        </div>
+      )}
+
+      {activeTab === 'Features' && (
+        <div className="space-y-5">
+          {/* Pillars */}
+          <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="mb-6">
+              <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">What's inside</p>
+              <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Six pillars of the platform</h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {pillars.map((p) => (
+                <div key={p.title} className={`rounded-2xl border p-5 ${p.bg} ${p.border}`}>
+                  <div className={`mb-3 inline-flex rounded-xl bg-white p-2.5 shadow-sm ${p.color}`}>{p.icon}</div>
+                  <p className={`text-sm font-black ${p.color}`}>{p.title}</p>
+                  <ul className="mt-3 space-y-1.5">
+                    {p.items.map((item) => (
+                      <li key={item} className="flex items-start gap-2 text-xs text-slate-300">
+                        <span className="mt-0.5 shrink-0 text-slate-400">→</span>{item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Full Feature List */}
+          <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <span className="mb-1 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-slate-500">{u.label}</span>
-                <p className="text-sm font-black text-slate-900">{u.title}</p>
-                <p className="mt-1 text-xs leading-5 text-slate-500">{u.desc}</p>
+                <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">Complete feature list</p>
+                <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Everything in the box</h2>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-700">
+                <Zap size={11} /> Recently updated
               </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── FULL FEATURE LIST ── */}
-      <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">Complete feature list</p>
-            <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Everything in the box</h2>
-          </div>
-          <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-700">
-            <Zap size={11} /> Recently updated
-          </div>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-          {features.map((f) => (
-            <div key={f.title} className="group rounded-2xl border border-slate-100 bg-[linear-gradient(180deg,#fff,#f8fafc)] p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
-              <div className="mb-3 inline-flex rounded-xl bg-gradient-to-br from-violet-100 to-amber-100 p-2 text-violet-600 transition group-hover:scale-110">
-                {f.icon}
-              </div>
-              <p className="text-[13px] font-black text-slate-900">{f.title}</p>
-              <p className="mt-1 text-[11px] leading-5 text-slate-500">{f.desc}</p>
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+              {features.map((f) => (
+                <div key={f.title} className="group rounded-2xl border border-slate-100 bg-[linear-gradient(180deg,#fff,#f8fafc)] p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                  <div className="mb-3 inline-flex rounded-xl bg-gradient-to-br from-violet-100 to-amber-100 p-2 text-violet-600 transition group-hover:scale-110">{f.icon}</div>
+                  <p className="text-[13px] font-black text-slate-900">{f.title}</p>
+                  <p className="mt-1 text-[11px] leading-5 text-slate-500">{f.desc}</p>
+                </div>
+              ))}
             </div>
-          ))}
+          </section>
         </div>
-      </section>
+      )}
 
-      {/* ── HOW-TO GUIDES ── */}
-      <section className="rounded-[28px] border border-slate-100 bg-[linear-gradient(135deg,#ffffff,#f8fafc_50%,#eff6ff)] p-6 shadow-sm">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">Step-by-step</p>
-            <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>How to use key features</h2>
-          </div>
-          <span className="flex items-center gap-1.5 rounded-full border border-sky-200 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-sky-700">
-            <BookOpen size={11} /> Guides
-          </span>
-        </div>
-        <div className="space-y-2">
-          {guides.map((guide, index) => {
-            const expanded = openGuideIndex === index;
-            return (
-              <div key={guide.title} className={`overflow-hidden rounded-2xl border transition-all duration-200 ${expanded ? `${guide.border} ${guide.bg}` : 'border-slate-200 bg-white'}`}>
-                <button
-                  type="button"
-                  onClick={() => setOpenGuideIndex(expanded ? null : index)}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className={`rounded-xl p-2 text-white ${expanded ? guide.accent : 'bg-slate-200 text-slate-500'} transition-colors`}>
-                      {guide.icon}
-                    </span>
-                    <span className={`text-sm font-black ${expanded ? guide.color : 'text-slate-900'}`}>{guide.title}</span>
-                  </div>
-                  <ChevronDown className={`shrink-0 transition-transform duration-300 ${expanded ? `rotate-180 ${guide.color}` : 'text-slate-400'}`} size={16} />
-                </button>
-                {expanded && (
-                  <div className="border-t border-slate-200/60 px-5 py-4">
-                    <ol className="space-y-3">
-                      {guide.steps.map((step, i) => (
-                        <li key={i} className="flex items-start gap-3">
-                          <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black text-white ${guide.accent}`}>
-                            {i + 1}
-                          </span>
-                          <span className="text-sm leading-6 text-slate-600">{step}</span>
-                        </li>
-                      ))}
-                    </ol>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ── FAQ ── */}
-      <section className="rounded-[28px] border border-slate-100 bg-white p-6 shadow-sm">
-        <div className="mb-6">
-          <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">FAQ</p>
-          <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Common questions</h2>
-        </div>
-        <div className="space-y-2">
-          {faqItems.map((item, index) => {
-            const expanded = openFaqIndex === index;
-            return (
-              <div key={item.question} className={`overflow-hidden rounded-2xl border transition ${expanded ? 'border-violet-200 bg-violet-50' : 'border-slate-200 bg-white'}`}>
-                <button
-                  type="button"
-                  onClick={() => setOpenFaqIndex(expanded ? null : index)}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
-                >
-                  <span className={`text-sm font-black ${expanded ? 'text-violet-900' : 'text-slate-900'}`}>{item.question}</span>
-                  <ChevronDown className={`shrink-0 transition-transform duration-300 ${expanded ? 'rotate-180 text-violet-600' : 'text-slate-400'}`} size={16} />
-                </button>
-                {expanded && (
-                  <div className="border-t border-violet-100 px-5 py-4 text-sm leading-7 text-slate-600">
-                    {item.answer}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ── CONTACT FOOTER ── */}
-      <section className="relative overflow-hidden rounded-[28px] bg-[radial-gradient(ellipse_at_bottom_right,#7c3aed_0%,#1e1b4b_50%,#0f172a_100%)] p-8 text-white shadow-[0_24px_80px_-40px_rgba(124,58,237,0.6)]">
-        <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-violet-400/20 blur-[70px]" />
-        <div className="pointer-events-none absolute -bottom-10 right-0 h-48 w-48 rounded-full bg-fuchsia-400/20 blur-[60px]" />
-        <div className="relative z-10">
-          <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-fuchsia-200">Get in touch</p>
-          <h2 className="text-2xl font-black sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Questions or support?</h2>
-          <p className="mt-2 max-w-lg text-sm text-white/82">Reach out on X, by email, or through in-app support. Response time is typically within 1 hour.</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="https://x.com/goody_apps"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-white backdrop-blur transition hover:bg-white/20"
-            >
-              <span className="rounded-xl bg-white/10 p-2 text-amber-300"><MessageCircle size={15} /></span>
-              <span>
-                <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/68">Business X</span>
-                <span className="block text-sm font-semibold text-white">@goody_apps</span>
-              </span>
-            </a>
-            <a
-              href="mailto:contact@goodyapps.com"
-              className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-white backdrop-blur transition hover:bg-white/20"
-            >
-              <span className="rounded-xl bg-white/10 p-2 text-sky-300"><MessageCircle size={15} /></span>
-              <span>
-                <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/68">Email</span>
-                <span className="block text-sm font-semibold text-white">contact@goodyapps.com</span>
-              </span>
-            </a>
-            <div className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 backdrop-blur">
-              <span className="rounded-xl bg-white/10 p-2 text-fuchsia-300"><UserCircle2 size={15} /></span>
-              <span>
-                <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/68">Support</span>
-                <span className="block text-sm font-semibold text-white">In-app · X DM · 1 hour response</span>
-              </span>
+      {activeTab === "What's New" && (
+        <section className="rounded-[28px] border border-slate-100 bg-[linear-gradient(135deg,#ffffff,#f8fafc_50%,#f5f3ff)] p-6 shadow-sm">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">What's been added</p>
+              <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Recent upgrades</h2>
             </div>
+            <span className="rounded-full border border-violet-200 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-violet-700">Continuously updated</span>
           </div>
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {recentUpgrades.map((u) => (
+              <div key={u.title} className="group flex gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                <div className="mt-0.5 shrink-0 rounded-xl bg-gradient-to-br from-violet-100 to-sky-100 p-2 text-violet-600 transition group-hover:scale-110">{u.icon}</div>
+                <div>
+                  <span className="mb-1 inline-block rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-slate-500">{u.label}</span>
+                  <p className="text-sm font-black text-slate-900">{u.title}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">{u.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {activeTab === 'Guides' && (
+        <section className="rounded-[28px] border border-slate-100 bg-[linear-gradient(135deg,#ffffff,#f8fafc_50%,#eff6ff)] p-6 shadow-sm">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">Step-by-step</p>
+              <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>How to use key features</h2>
+            </div>
+            <span className="flex items-center gap-1.5 rounded-full border border-sky-200 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-sky-700">
+              <BookOpen size={11} /> Guides
+            </span>
+          </div>
+          <div className="space-y-2">
+            {guides.map((guide, index) => {
+              const expanded = openGuideIndex === index;
+              return (
+                <div key={guide.title} className={`overflow-hidden rounded-2xl border transition-all duration-200 ${expanded ? `${guide.border} ${guide.bg}` : 'border-slate-200 bg-white'}`}>
+                  <button
+                    type="button"
+                    onClick={() => setOpenGuideIndex(expanded ? null : index)}
+                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className={`rounded-xl p-2 text-white ${expanded ? guide.accent : 'bg-slate-200 text-slate-500'} transition-colors`}>{guide.icon}</span>
+                      <span className={`text-sm font-black ${expanded ? guide.color : 'text-slate-900'}`}>{guide.title}</span>
+                    </div>
+                    <ChevronDown className={`shrink-0 transition-transform duration-300 ${expanded ? `rotate-180 ${guide.color}` : 'text-slate-400'}`} size={16} />
+                  </button>
+                  {expanded && (
+                    <div className="border-t border-slate-200/60 px-5 py-4">
+                      <ol className="space-y-3">
+                        {guide.steps.map((step, i) => (
+                          <li key={i} className="flex items-start gap-3">
+                            <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black text-white ${guide.accent}`}>{i + 1}</span>
+                            <span className="text-sm leading-6 text-slate-600">{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {activeTab === 'Support' && (
+        <div className="space-y-5">
+          {/* FAQ */}
+          <section className="rounded-[28px] border border-slate-100 bg-white p-6 shadow-sm">
+            <div className="mb-6">
+              <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-violet-600">FAQ</p>
+              <h2 className="text-2xl font-black text-slate-900 sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Common questions</h2>
+            </div>
+            <div className="space-y-2">
+              {faqItems.map((item, index) => {
+                const expanded = openFaqIndex === index;
+                return (
+                  <div key={item.question} className={`overflow-hidden rounded-2xl border transition ${expanded ? 'border-violet-200 bg-violet-50' : 'border-slate-200 bg-white'}`}>
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaqIndex(expanded ? null : index)}
+                      className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                    >
+                      <span className={`text-sm font-black ${expanded ? 'text-violet-900' : 'text-slate-900'}`}>{item.question}</span>
+                      <ChevronDown className={`shrink-0 transition-transform duration-300 ${expanded ? 'rotate-180 text-violet-600' : 'text-slate-400'}`} size={16} />
+                    </button>
+                    {expanded && (
+                      <div className="border-t border-violet-100 px-5 py-4 text-sm leading-7 text-slate-600">{item.answer}</div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Contact */}
+          <section className="relative overflow-hidden rounded-[28px] bg-[radial-gradient(ellipse_at_bottom_right,#7c3aed_0%,#1e1b4b_50%,#0f172a_100%)] p-8 text-white shadow-[0_24px_80px_-40px_rgba(124,58,237,0.6)]">
+            <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-violet-400/20 blur-[70px]" />
+            <div className="pointer-events-none absolute -bottom-10 right-0 h-48 w-48 rounded-full bg-fuchsia-400/20 blur-[60px]" />
+            <div className="relative z-10">
+              <p className="mb-1 text-[11px] font-black uppercase tracking-[0.3em] text-fuchsia-200">Get in touch</p>
+              <h2 className="text-2xl font-black sm:text-3xl" style={{ fontFamily: 'var(--font-display)' }}>Questions or support?</h2>
+              <p className="mt-2 max-w-lg text-sm text-white/82">Reach out on X, by email, or through in-app support. Response time is typically within 1 hour.</p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a href="https://x.com/goody_apps" target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-white backdrop-blur transition hover:bg-white/20">
+                  <span className="rounded-xl bg-white/10 p-2 text-amber-300"><MessageCircle size={15} /></span>
+                  <span>
+                    <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/68">Business X</span>
+                    <span className="block text-sm font-semibold text-white">@goody_apps</span>
+                  </span>
+                </a>
+                <a href="mailto:contact@goodyapps.com" className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-white backdrop-blur transition hover:bg-white/20">
+                  <span className="rounded-xl bg-white/10 p-2 text-sky-300"><MessageCircle size={15} /></span>
+                  <span>
+                    <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/68">Email</span>
+                    <span className="block text-sm font-semibold text-white">contact@goodyapps.com</span>
+                  </span>
+                </a>
+                <div className="flex items-center gap-3 rounded-2xl border border-white/20 bg-white/10 px-5 py-3 backdrop-blur">
+                  <span className="rounded-xl bg-white/10 p-2 text-fuchsia-300"><UserCircle2 size={15} /></span>
+                  <span>
+                    <span className="block text-[10px] font-bold uppercase tracking-[0.18em] text-white/68">Support</span>
+                    <span className="block text-sm font-semibold text-white">In-app · X DM · 1 hour response</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
+      )}
 
     </div>
   );
